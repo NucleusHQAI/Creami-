@@ -19,3 +19,6 @@ dist-ssr
 
 coverage
 *.tsbuildinfo
+
+# Claude Code harness state (agent worktrees, local settings) — never repo content
+.claude/
