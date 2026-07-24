@@ -15,5 +15,8 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: './src/test/setup.ts',
+    // .claude/worktrees holds sibling agents' full checkouts (see .gitignore) —
+    // without this, vitest crawls into them and runs their in-progress tests too.
+    exclude: ['**/node_modules/**', '**/dist/**', '.claude/**'],
   },
 })
