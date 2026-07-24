@@ -20,9 +20,15 @@ export const queryKeys = {
   batches: {
     all: ['batches'] as const,
     active: ['batches', 'active'] as const,
+    history: ['batches', 'history'] as const,
+    forRecipe: (recipeId: string) => ['batches', 'recipe', recipeId] as const,
   },
+  recipeOptions: { all: ['recipeOptions'] as const },
   tastingNotes: {
     forRecipe: (recipeId: string) => ['tastingNotes', 'recipe', recipeId] as const,
+  },
+  recipeRatings: {
+    forRecipe: (recipeId: string) => ['recipeRatings', 'recipe', recipeId] as const,
   },
   shopping: {
     plan: ['shopping', 'plan'] as const,
