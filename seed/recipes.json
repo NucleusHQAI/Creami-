@@ -1,0 +1,594 @@
+{
+  "_meta": {
+    "source": "Derived from the original single-file HTML recipe book. All personal-name fields ('pick': antony/maddie/both) have been deliberately removed and must not be reintroduced.",
+    "quantities": "Every quantity is per one full Deluxe tub and has been converted from the original spoon measures to grams or millilitres so the macro engine can total them. The original human-readable wording is preserved in the 'display' field of each line and is what the UI shows.",
+    "reference_macros": "'reference_kcal' and 'reference_protein_g' are the estimates printed in the original document. They are NOT the values the app displays — the macro engine computes those from the ingredients. They are seeded only so the calibration task (docs/04-macro-engine.md) can compare computed against original and flag any ingredient whose defaults are badly wrong. They may be dropped from the schema once calibration is signed off.",
+    "spoon_conversions_used": {
+      "vanilla_bean_paste": "1 tsp = 5g",
+      "vanilla_extract": "1 tsp = 4.5ml",
+      "cinnamon": "1 tsp = 2.5g",
+      "cardamom": "1/8 tsp = 0.3g",
+      "espresso_powder": "1 tsp = 2g",
+      "cocoa_powder": "1 tsp = 2.5g",
+      "almond_or_butter_extract": "1/4 tsp = 1.2ml",
+      "peppermint_extract": "1 drop = 0.05ml",
+      "honey": "1 tsp = 7g",
+      "pinch_of_salt": "0.5g",
+      "zest_of_one_citrus_fruit": "2g",
+      "squeeze_of_lime": "5ml"
+    }
+  },
+  "recipes": [
+    {
+      "slug": "vanilla-custard", "name": "Vanilla Custard", "category": "classic", "base": "everyday",
+      "profile": "Proper vanilla, custardy and richer than the calorie count suggests.",
+      "tip": "Vanilla bean paste plus salt makes this taste far less like a protein shake.",
+      "reference_kcal": 428, "reference_protein_g": 61,
+      "additions": [
+        { "ingredient": "vanilla-bean-paste", "quantity": 5, "unit": "g", "display": "1 tsp vanilla bean paste" },
+        { "ingredient": "fine-salt", "quantity": 0.5, "unit": "g", "display": "Pinch of fine salt" }
+      ],
+      "mixins": [
+        { "ingredient": "wafer-pieces", "quantity": 5, "unit": "g", "display": "5g wafer pieces", "optional": true }
+      ],
+      "mixin_note": "Optional: 5g wafer pieces."
+    },
+    {
+      "slug": "salted-caramel-swirl", "name": "Salted Caramel Swirl", "category": "classic", "base": "everyday",
+      "profile": "Sweet-salty caramel with a defined ribbon.",
+      "tip": "Taste the unfrozen base slightly sweeter and saltier than needed because freezing dulls both.",
+      "reference_kcal": 447, "reference_protein_g": 61,
+      "additions": [
+        { "ingredient": "flavour-drops", "quantity": 2, "unit": "ml", "display": "Salted caramel flavour drops" },
+        { "ingredient": "fine-salt", "quantity": 1, "unit": "g", "display": "Large pinch sea salt" },
+        { "ingredient": "caramel-syrup-sugar-free", "quantity": 15, "unit": "ml", "display": "15ml sugar-free caramel syrup" }
+      ],
+      "mixins": [
+        { "ingredient": "caramel-syrup-sugar-free", "quantity": 10, "unit": "ml", "display": "10ml caramel syrup" }
+      ],
+      "mixin_note": "Add another 10ml caramel syrup after spinning."
+    },
+    {
+      "slug": "roasted-pistachio", "name": "Roasted Pistachio", "category": "classic", "base": "dessert",
+      "profile": "Nutty, pale green and genuinely creamy.",
+      "tip": "Almond extract is powerful, a quarter teaspoon is normally enough.",
+      "reference_kcal": 506, "reference_protein_g": 64,
+      "additions": [
+        { "ingredient": "pistachio-butter", "quantity": 15, "unit": "g", "display": "15g pistachio butter" },
+        { "ingredient": "almond-extract", "quantity": 1.2, "unit": "ml", "display": "1/4 tsp almond extract" },
+        { "ingredient": "fine-salt", "quantity": 0.5, "unit": "g", "display": "Pinch of salt" }
+      ],
+      "mixins": [
+        { "ingredient": "pistachios-chopped", "quantity": 8, "unit": "g", "display": "8g chopped pistachios" }
+      ],
+      "mixin_note": "8g chopped pistachios."
+    },
+    {
+      "slug": "peanut-butter-and-jam", "name": "Peanut Butter & Jam", "category": "classic", "base": "dessert",
+      "profile": "A creamy peanut base with a sharp raspberry-jam ribbon.",
+      "tip": "Powdered peanut butter flavours the whole base, while the small amount of real peanut butter rounds it out.",
+      "reference_kcal": 554, "reference_protein_g": 69,
+      "additions": [
+        { "ingredient": "peanut-butter-powdered", "quantity": 18, "unit": "g", "display": "18g powdered peanut butter" },
+        { "ingredient": "peanut-butter-smooth", "quantity": 8, "unit": "g", "display": "8g smooth peanut butter" },
+        { "ingredient": "fine-salt", "quantity": 0.5, "unit": "g", "display": "Pinch of salt" }
+      ],
+      "mixins": [
+        { "ingredient": "jam-reduced-sugar", "quantity": 25, "unit": "g", "display": "25g reduced-sugar raspberry jam" }
+      ],
+      "mixin_note": "25g reduced-sugar raspberry jam, warmed briefly so it ripples easily."
+    },
+    {
+      "slug": "cookies-and-cream", "name": "Cookies & Cream", "category": "classic", "base": "everyday",
+      "profile": "Clean vanilla with biscuit flecks and crunchy pieces.",
+      "tip": "Keep the biscuits out of the frozen base so they stay distinct.",
+      "reference_kcal": 486, "reference_protein_g": 63,
+      "additions": [
+        { "ingredient": "vanilla-extract", "quantity": 2.2, "unit": "ml", "display": "1/2 tsp vanilla extract" }
+      ],
+      "mixins": [
+        { "ingredient": "oreo-thin", "quantity": 2, "unit": "item", "display": "2 Oreo Thins or reduced-sugar sandwich biscuits" }
+      ],
+      "mixin_note": "2 Oreo Thins or reduced-sugar sandwich biscuits."
+    },
+    {
+      "slug": "strawberries-and-cream", "name": "Strawberries & Cream", "category": "classic", "base": "fruit",
+      "profile": "Simple British strawberries-and-cream flavour.",
+      "tip": "Blend most of the fruit fully to avoid icy pockets.",
+      "reference_kcal": 438, "reference_protein_g": 60,
+      "additions": [
+        { "ingredient": "strawberries", "quantity": 100, "unit": "g", "display": "100g strawberries" },
+        { "ingredient": "vanilla-extract", "quantity": 4.5, "unit": "ml", "display": "1 tsp vanilla extract" }
+      ],
+      "mixins": [
+        { "ingredient": "strawberries", "quantity": 25, "unit": "g", "display": "25g finely chopped strawberries", "optional": true }
+      ],
+      "mixin_note": "Optional: reserve 25g finely chopped strawberries."
+    },
+    {
+      "slug": "honeycomb-crunch", "name": "Honeycomb Crunch", "category": "classic", "base": "everyday",
+      "profile": "Caramelised honeycomb flavour with a controlled crunch.",
+      "tip": "A teaspoon of real honey rounds out flavour without adding much per serving.",
+      "reference_kcal": 472, "reference_protein_g": 60,
+      "additions": [
+        { "ingredient": "flavour-drops", "quantity": 2, "unit": "ml", "display": "Honeycomb or caramel flavour drops" },
+        { "ingredient": "honey", "quantity": 7, "unit": "g", "display": "1 tsp honey" },
+        { "ingredient": "fine-salt", "quantity": 0.5, "unit": "g", "display": "Pinch of salt" }
+      ],
+      "mixins": [
+        { "ingredient": "honeycomb-pieces", "quantity": 12, "unit": "g", "display": "12g crushed honeycomb pieces" }
+      ],
+      "mixin_note": "12g crushed honeycomb pieces."
+    },
+    {
+      "slug": "birthday-cake", "name": "Birthday Cake", "category": "classic", "base": "everyday",
+      "profile": "Vanilla sponge flavour, almond and colourful sprinkles.",
+      "tip": "That tiny amount of almond creates the familiar birthday-cake flavour.",
+      "reference_kcal": 451, "reference_protein_g": 61,
+      "additions": [
+        { "ingredient": "vanilla-extract", "quantity": 4.5, "unit": "ml", "display": "1 tsp vanilla extract" },
+        { "ingredient": "almond-extract", "quantity": 0.6, "unit": "ml", "display": "1/8 tsp almond extract" }
+      ],
+      "mixins": [
+        { "ingredient": "sprinkles", "quantity": 8, "unit": "g", "display": "8g sprinkles" }
+      ],
+      "mixin_note": "8g sprinkles."
+    },
+    {
+      "slug": "banana-pudding", "name": "Banana Pudding", "category": "classic", "base": "fruit",
+      "profile": "Ripe banana, vanilla cream and a little biscuit crunch, without the caramel notes of banoffee.",
+      "tip": "Use a heavily spotted banana and blend it completely smooth before freezing.",
+      "reference_kcal": 468, "reference_protein_g": 58,
+      "additions": [
+        { "ingredient": "banana", "quantity": 120, "unit": "g", "display": "120g very ripe banana" },
+        { "ingredient": "vanilla-bean-paste", "quantity": 5, "unit": "g", "display": "1 tsp vanilla bean paste" },
+        { "ingredient": "fine-salt", "quantity": 0.5, "unit": "g", "display": "Pinch of salt" }
+      ],
+      "mixins": [
+        { "ingredient": "vanilla-biscuit-light", "quantity": 1, "unit": "item", "display": "1 light vanilla biscuit, crushed" }
+      ],
+      "mixin_note": "1 light vanilla biscuit or 1/2 light digestive, crushed."
+    },
+    {
+      "slug": "strawberry-cheesecake", "name": "Strawberry Cheesecake", "category": "fruit", "base": "cheesecake",
+      "profile": "Tangy cheesecake, strawberry ripple and biscuit crumb.",
+      "tip": "Keep some fruit out of the base for a visible ripple.",
+      "reference_kcal": 489, "reference_protein_g": 62,
+      "additions": [
+        { "ingredient": "strawberries", "quantity": 100, "unit": "g", "display": "100g strawberries" },
+        { "ingredient": "citrus-juice", "quantity": 5, "unit": "ml", "display": "1 tsp lemon juice" }
+      ],
+      "mixins": [
+        { "ingredient": "digestive-light", "quantity": 1, "unit": "item", "display": "1 light digestive" }
+      ],
+      "mixin_note": "1 light digestive plus reserved strawberry sauce."
+    },
+    {
+      "slug": "lemon-cheesecake", "name": "Lemon Cheesecake", "category": "fruit", "base": "cheesecake",
+      "profile": "Sharp lemon curd flavour with a creamy finish.",
+      "tip": "Use both zest and juice, zest supplies most of the aroma.",
+      "reference_kcal": 468, "reference_protein_g": 64,
+      "additions": [
+        { "ingredient": "citrus-zest", "quantity": 2, "unit": "g", "display": "Zest of 1 lemon" },
+        { "ingredient": "citrus-juice", "quantity": 15, "unit": "ml", "display": "15ml lemon juice" }
+      ],
+      "mixins": [
+        { "ingredient": "digestive-light", "quantity": 0.5, "unit": "item", "display": "1/2 light digestive", "optional": true }
+      ],
+      "mixin_note": "1/2 light digestive, optional."
+    },
+    {
+      "slug": "key-lime-pie", "name": "Key Lime Pie", "category": "fruit", "base": "cheesecake",
+      "profile": "Lime-forward, creamy and slightly tropical.",
+      "tip": "The mix should taste noticeably sharp before freezing.",
+      "reference_kcal": 474, "reference_protein_g": 63,
+      "additions": [
+        { "ingredient": "citrus-zest", "quantity": 4, "unit": "g", "display": "Zest of 2 limes" },
+        { "ingredient": "citrus-juice", "quantity": 30, "unit": "ml", "display": "Juice of 2 limes" }
+      ],
+      "mixins": [
+        { "ingredient": "digestive-light", "quantity": 0.5, "unit": "item", "display": "1/2 light digestive" }
+      ],
+      "mixin_note": "1/2 light digestive."
+    },
+    {
+      "slug": "raspberry-ripple", "name": "Raspberry Ripple", "category": "fruit", "base": "everyday",
+      "profile": "White vanilla ice cream threaded with tart raspberry.",
+      "tip": "Strain the sauce first when you want a seedless ripple.",
+      "reference_kcal": 435, "reference_protein_g": 60,
+      "additions": [
+        { "ingredient": "vanilla-extract", "quantity": 4.5, "unit": "ml", "display": "1 tsp vanilla extract" }
+      ],
+      "mixins": [
+        { "ingredient": "raspberry-compote", "quantity": 80, "unit": "g", "display": "80g raspberry compote, fully cooled" }
+      ],
+      "mixin_note": "80g raspberry compote, fully cooled."
+    },
+    {
+      "slug": "blueberry-muffin", "name": "Blueberry Muffin", "category": "fruit", "base": "fruit",
+      "profile": "Blueberry compote with vanilla crumb and bakery spice.",
+      "tip": "A little cinnamon makes this read as muffin rather than yoghurt.",
+      "reference_kcal": 472, "reference_protein_g": 61,
+      "additions": [
+        { "ingredient": "blueberries", "quantity": 100, "unit": "g", "display": "100g blueberries" },
+        { "ingredient": "cinnamon", "quantity": 0.6, "unit": "g", "display": "1/4 tsp cinnamon" },
+        { "ingredient": "vanilla-extract", "quantity": 2.2, "unit": "ml", "display": "1/2 tsp vanilla" }
+      ],
+      "mixins": [
+        { "ingredient": "cereal-crumb", "quantity": 8, "unit": "g", "display": "8g cereal or biscuit crumb" }
+      ],
+      "mixin_note": "8g cereal or biscuit crumb."
+    },
+    {
+      "slug": "mango-lassi", "name": "Mango Lassi", "category": "fruit", "base": "fruit",
+      "profile": "Ripe mango, yoghurt, lime and cardamom.",
+      "tip": "Thaw frozen mango before blending for a smoother base.",
+      "reference_kcal": 414, "reference_protein_g": 53,
+      "additions": [
+        { "ingredient": "mango", "quantity": 160, "unit": "g", "display": "160g ripe mango" },
+        { "ingredient": "cardamom", "quantity": 0.3, "unit": "g", "display": "1/8 tsp cardamom" },
+        { "ingredient": "citrus-juice", "quantity": 5, "unit": "ml", "display": "Squeeze of lime" }
+      ],
+      "mixins": [],
+      "mixin_note": "No mix-in needed."
+    },
+    {
+      "slug": "peach-melba", "name": "Peach Melba", "category": "fruit", "base": "fruit",
+      "profile": "Soft peach ice cream with a raspberry ripple.",
+      "tip": "Tinned peaches are consistent and blend smoothly year-round.",
+      "reference_kcal": 425, "reference_protein_g": 54,
+      "additions": [
+        { "ingredient": "peaches-tinned-drained", "quantity": 150, "unit": "g", "display": "150g drained tinned peaches" },
+        { "ingredient": "vanilla-extract", "quantity": 2.2, "unit": "ml", "display": "1/2 tsp vanilla" }
+      ],
+      "mixins": [
+        { "ingredient": "raspberry-compote", "quantity": 60, "unit": "g", "display": "60g raspberry compote" }
+      ],
+      "mixin_note": "60g raspberry compote."
+    },
+    {
+      "slug": "pina-colada", "name": "Piña Colada", "category": "fruit", "base": "coconut",
+      "profile": "Pineapple and coconut, creamy rather than sorbet-like.",
+      "tip": "Light coconut milk tastes more convincing than extract alone.",
+      "reference_kcal": 451, "reference_protein_g": 51,
+      "additions": [
+        { "ingredient": "pineapple-tinned-drained", "quantity": 140, "unit": "g", "display": "140g drained pineapple" },
+        { "ingredient": "citrus-juice", "quantity": 5, "unit": "ml", "display": "Squeeze of lime" },
+        { "ingredient": "flavour-drops", "quantity": 1, "unit": "ml", "display": "Coconut drops", "optional": true }
+      ],
+      "mixins": [
+        { "ingredient": "coconut-toasted", "quantity": 5, "unit": "g", "display": "5g toasted coconut", "optional": true }
+      ],
+      "mixin_note": "5g toasted coconut, optional."
+    },
+    {
+      "slug": "cinnamon-roll", "name": "Cinnamon Roll", "category": "bakery", "base": "everyday",
+      "profile": "Warm cinnamon bun with a maple-cinnamon ribbon.",
+      "tip": "A tiny pinch of salt gives the contrast of icing.",
+      "reference_kcal": 449, "reference_protein_g": 61,
+      "additions": [
+        { "ingredient": "cinnamon", "quantity": 1.9, "unit": "g", "display": "3/4 tsp cinnamon" },
+        { "ingredient": "vanilla-extract", "quantity": 2.2, "unit": "ml", "display": "1/2 tsp vanilla" }
+      ],
+      "mixins": [
+        { "ingredient": "maple-syrup-sugar-free", "quantity": 10, "unit": "ml", "display": "10ml sugar-free maple syrup mixed with cinnamon" }
+      ],
+      "mixin_note": "10ml sugar-free maple syrup mixed with cinnamon."
+    },
+    {
+      "slug": "biscoff-swirl", "name": "Biscoff Swirl", "category": "bakery", "base": "dessert",
+      "profile": "Spiced caramel biscuit with a controlled amount of real spread.",
+      "tip": "Real spread in the base delivers more flavour than several biscuits.",
+      "reference_kcal": 514, "reference_protein_g": 61,
+      "additions": [
+        { "ingredient": "biscoff-spread", "quantity": 10, "unit": "g", "display": "10g Biscoff spread" },
+        { "ingredient": "cinnamon", "quantity": 1.25, "unit": "g", "display": "1/2 tsp cinnamon" }
+      ],
+      "mixins": [
+        { "ingredient": "biscoff-spread", "quantity": 8, "unit": "g", "display": "8g warmed Biscoff spread" },
+        { "ingredient": "biscoff-biscuit", "quantity": 1, "unit": "item", "display": "1 Biscoff biscuit" }
+      ],
+      "mixin_note": "8g warmed Biscoff plus 1 biscuit."
+    },
+    {
+      "slug": "apple-crumble", "name": "Apple Crumble", "category": "bakery", "base": "fruit",
+      "profile": "Stewed cinnamon apple with oat-biscuit crumble.",
+      "tip": "Microwave apple with cinnamon and water, no butter is needed.",
+      "reference_kcal": 488, "reference_protein_g": 59,
+      "additions": [
+        { "ingredient": "apple-softened", "quantity": 130, "unit": "g", "display": "130g softened apple" },
+        { "ingredient": "cinnamon", "quantity": 1.9, "unit": "g", "display": "3/4 tsp cinnamon" }
+      ],
+      "mixins": [
+        { "ingredient": "oat-biscuit-crumb", "quantity": 12, "unit": "g", "display": "12g oat biscuit or granola crumb" }
+      ],
+      "mixin_note": "12g oat biscuit or granola crumb."
+    },
+    {
+      "slug": "banoffee-pie", "name": "Banoffee Pie", "category": "bakery", "base": "fruit",
+      "profile": "Banana, salted caramel and digestive crumb.",
+      "tip": "A heavily spotted banana gives much more flavour.",
+      "reference_kcal": 501, "reference_protein_g": 59,
+      "additions": [
+        { "ingredient": "banana", "quantity": 120, "unit": "g", "display": "120g very ripe banana" },
+        { "ingredient": "flavour-drops", "quantity": 2, "unit": "ml", "display": "Salted caramel drops" },
+        { "ingredient": "fine-salt", "quantity": 0.5, "unit": "g", "display": "Pinch of salt" }
+      ],
+      "mixins": [
+        { "ingredient": "digestive-light", "quantity": 1, "unit": "item", "display": "1 light digestive" },
+        { "ingredient": "caramel-syrup-sugar-free", "quantity": 10, "unit": "ml", "display": "10ml caramel syrup" }
+      ],
+      "mixin_note": "1 light digestive plus 10ml caramel syrup."
+    },
+    {
+      "slug": "custard-cream", "name": "Custard Cream", "category": "bakery", "base": "everyday",
+      "profile": "Classic custard biscuit flavour, nostalgic and creamy.",
+      "tip": "The vanilla, tiny amount of bakery-style extract and the biscuits provide the familiar custard-cream character.",
+      "reference_kcal": 482, "reference_protein_g": 62,
+      "additions": [
+        { "ingredient": "vanilla-bean-paste", "quantity": 2.5, "unit": "g", "display": "1/2 tsp vanilla bean paste" },
+        { "ingredient": "butter-extract", "quantity": 0.5, "unit": "ml", "display": "1–2 drops butter extract", "optional": true }
+      ],
+      "mixins": [
+        { "ingredient": "custard-cream-biscuit", "quantity": 2, "unit": "item", "display": "2 custard cream biscuits" }
+      ],
+      "mixin_note": "2 custard cream biscuits."
+    },
+    {
+      "slug": "cherry-bakewell", "name": "Cherry Bakewell", "category": "bakery", "base": "fruit",
+      "profile": "Cherry ripple, almond sponge notes and biscuit crunch.",
+      "tip": "Keep the almond restrained or it quickly becomes marzipan-like.",
+      "reference_kcal": 477, "reference_protein_g": 61,
+      "additions": [
+        { "ingredient": "cherries", "quantity": 80, "unit": "g", "display": "80g thawed cherries" },
+        { "ingredient": "almond-extract", "quantity": 1.2, "unit": "ml", "display": "1/4 tsp almond extract" }
+      ],
+      "mixins": [
+        { "ingredient": "shortbread-crumb", "quantity": 8, "unit": "g", "display": "8g shortbread crumb or almond flakes" }
+      ],
+      "mixin_note": "8g shortbread crumb or almond flakes."
+    },
+    {
+      "slug": "snickerdoodle", "name": "Snickerdoodle", "category": "bakery", "base": "everyday",
+      "profile": "Soft cinnamon-sugar biscuit flavour.",
+      "tip": "Butter extract makes bakery flavours more convincing.",
+      "reference_kcal": 462, "reference_protein_g": 61,
+      "additions": [
+        { "ingredient": "cinnamon", "quantity": 1.9, "unit": "g", "display": "3/4 tsp cinnamon" },
+        { "ingredient": "butter-extract", "quantity": 0.5, "unit": "ml", "display": "A few drops butter extract", "optional": true }
+      ],
+      "mixins": [
+        { "ingredient": "biscuit-reduced-sugar", "quantity": 1, "unit": "item", "display": "1 reduced-sugar biscuit tossed in cinnamon sweetener" }
+      ],
+      "mixin_note": "1 reduced-sugar biscuit tossed in cinnamon sweetener."
+    },
+    {
+      "slug": "jam-doughnut", "name": "Jam Doughnut", "category": "bakery", "base": "everyday",
+      "profile": "Vanilla doughnut with a bright raspberry-jam centre.",
+      "tip": "One short MIX-IN cycle keeps a recognisable ribbon.",
+      "reference_kcal": 474, "reference_protein_g": 61,
+      "additions": [
+        { "ingredient": "butter-extract", "quantity": 1.2, "unit": "ml", "display": "1/4 tsp butter extract" },
+        { "ingredient": "vanilla-extract", "quantity": 2.2, "unit": "ml", "display": "1/2 tsp vanilla" }
+      ],
+      "mixins": [
+        { "ingredient": "jam-reduced-sugar", "quantity": 20, "unit": "g", "display": "20g reduced-sugar raspberry jam" }
+      ],
+      "mixin_note": "20g reduced-sugar raspberry jam."
+    },
+    {
+      "slug": "coffee-and-cream", "name": "Coffee & Cream", "category": "coffee", "base": "everyday",
+      "profile": "A smooth iced-latte flavour that is properly coffee-led.",
+      "tip": "Espresso powder is cleaner and less bitter than ordinary instant coffee.",
+      "reference_kcal": 421, "reference_protein_g": 61,
+      "additions": [
+        { "ingredient": "espresso-powder", "quantity": 4, "unit": "g", "display": "2 tsp espresso powder, dissolved and cooled" },
+        { "ingredient": "vanilla-extract", "quantity": 2.2, "unit": "ml", "display": "1/2 tsp vanilla" }
+      ],
+      "mixins": [],
+      "mixin_note": "Optional: pour fresh espresso over a scoop."
+    },
+    {
+      "slug": "mocha", "name": "Mocha", "category": "coffee", "base": "choc",
+      "profile": "Coffee and chocolate in equal measure, rich enough to feel like dessert.",
+      "tip": "Use espresso powder rather than ordinary instant coffee for a cleaner flavour.",
+      "reference_kcal": 493, "reference_protein_g": 66,
+      "additions": [
+        { "ingredient": "espresso-powder", "quantity": 4, "unit": "g", "display": "2 tsp espresso powder, dissolved and cooled" },
+        { "ingredient": "cocoa-powder", "quantity": 10, "unit": "g", "display": "10g cocoa powder" },
+        { "ingredient": "fine-salt", "quantity": 0.5, "unit": "g", "display": "Pinch of salt" }
+      ],
+      "mixins": [
+        { "ingredient": "dark-chocolate", "quantity": 8, "unit": "g", "display": "8g finely chopped chocolate", "optional": true }
+      ],
+      "mixin_note": "Optional: 8g finely chopped chocolate."
+    },
+    {
+      "slug": "tiramisu", "name": "Tiramisu", "category": "coffee", "base": "cheesecake",
+      "profile": "Coffee, creamy mascarpone notes and a cocoa finish.",
+      "tip": "Coffee plus dairy tang creates the tiramisu effect.",
+      "reference_kcal": 488, "reference_protein_g": 63,
+      "additions": [
+        { "ingredient": "espresso-powder", "quantity": 4, "unit": "g", "display": "2 tsp espresso powder" },
+        { "ingredient": "cocoa-powder", "quantity": 2.5, "unit": "g", "display": "1 tsp cocoa for dusting" }
+      ],
+      "mixins": [
+        { "ingredient": "sponge-fingers", "quantity": 8, "unit": "g", "display": "8g sponge finger pieces", "optional": true }
+      ],
+      "mixin_note": "8g sponge finger pieces, optional."
+    },
+    {
+      "slug": "caramel-macchiato", "name": "Caramel Macchiato", "category": "coffee", "base": "everyday",
+      "profile": "Sweet vanilla coffee with a salted caramel ribbon.",
+      "tip": "Keep coffee gentler here so the caramel remains noticeable.",
+      "reference_kcal": 450, "reference_protein_g": 61,
+      "additions": [
+        { "ingredient": "espresso-powder", "quantity": 3, "unit": "g", "display": "1 1/2 tsp espresso powder" },
+        { "ingredient": "flavour-drops", "quantity": 2, "unit": "ml", "display": "Salted caramel drops" }
+      ],
+      "mixins": [
+        { "ingredient": "caramel-syrup-sugar-free", "quantity": 15, "unit": "ml", "display": "15ml sugar-free caramel syrup" }
+      ],
+      "mixin_note": "15ml sugar-free caramel syrup."
+    },
+    {
+      "slug": "hazelnut-latte", "name": "Hazelnut Latte", "category": "coffee", "base": "dessert",
+      "profile": "Roasted hazelnut and coffee, optionally chocolate-flecked.",
+      "tip": "Hazelnut butter gives body while flavour drops can lift aroma.",
+      "reference_kcal": 469, "reference_protein_g": 62,
+      "additions": [
+        { "ingredient": "espresso-powder", "quantity": 3, "unit": "g", "display": "1 1/2 tsp espresso powder" },
+        { "ingredient": "hazelnut-butter", "quantity": 8, "unit": "g", "display": "8g hazelnut butter" }
+      ],
+      "mixins": [
+        { "ingredient": "dark-chocolate", "quantity": 5, "unit": "g", "display": "5g dark chocolate shavings", "optional": true }
+      ],
+      "mixin_note": "5g dark chocolate shavings, optional."
+    },
+    {
+      "slug": "horchata", "name": "Horchata", "category": "coffee", "base": "everyday",
+      "profile": "Creamy rice-pudding flavour with cinnamon and vanilla.",
+      "tip": "Rest the mixed base for five minutes so cinnamon disperses.",
+      "reference_kcal": 438, "reference_protein_g": 61,
+      "additions": [
+        { "ingredient": "cinnamon", "quantity": 2.5, "unit": "g", "display": "1 tsp cinnamon" },
+        { "ingredient": "vanilla-extract", "quantity": 2.2, "unit": "ml", "display": "1/2 tsp vanilla" }
+      ],
+      "mixins": [],
+      "mixin_note": "No mix-in needed."
+    },
+    {
+      "slug": "double-chocolate-brownie", "name": "Double Chocolate Brownie", "category": "chocolate", "base": "choc",
+      "profile": "Dark, fudgy and brownie-like rather than a thin shake.",
+      "tip": "Dutch-process cocoa gives a rounder, darker flavour.",
+      "reference_kcal": 523, "reference_protein_g": 66,
+      "additions": [
+        { "ingredient": "cocoa-powder", "quantity": 15, "unit": "g", "display": "15g cocoa powder" },
+        { "ingredient": "fine-salt", "quantity": 0.5, "unit": "g", "display": "Pinch of salt" }
+      ],
+      "mixins": [
+        { "ingredient": "brownie-pieces", "quantity": 15, "unit": "g", "display": "15g brownie pieces or chocolate chips" }
+      ],
+      "mixin_note": "15g brownie pieces or chocolate chips."
+    },
+    {
+      "slug": "milk-chocolate-malt", "name": "Milk Chocolate Malt", "category": "chocolate", "base": "choc",
+      "profile": "A sweeter, rounder chocolate with a proper malt-shop finish.",
+      "tip": "Keep the cocoa lighter than in the brownie recipe so the malt remains noticeable.",
+      "reference_kcal": 526, "reference_protein_g": 65,
+      "additions": [
+        { "ingredient": "malted-milk-powder", "quantity": 12, "unit": "g", "display": "12g malted milk powder" },
+        { "ingredient": "cocoa-powder", "quantity": 8, "unit": "g", "display": "8g cocoa powder" },
+        { "ingredient": "flavour-drops", "quantity": 1, "unit": "ml", "display": "Milk-chocolate flavour drops", "optional": true }
+      ],
+      "mixins": [
+        { "ingredient": "milk-chocolate-chips", "quantity": 10, "unit": "g", "display": "10g milk-chocolate chips", "optional": true }
+      ],
+      "mixin_note": "Optional: 10g milk-chocolate chips."
+    },
+    {
+      "slug": "chocolate-peanut-butter-cup", "name": "Chocolate Peanut Butter Cup", "category": "chocolate", "base": "choc",
+      "profile": "Chocolate, powdered peanut butter and a real PB ribbon.",
+      "tip": "Powder flavours the base, real peanut butter supplies the ribbon.",
+      "reference_kcal": 542, "reference_protein_g": 70,
+      "additions": [
+        { "ingredient": "peanut-butter-powdered", "quantity": 18, "unit": "g", "display": "18g powdered peanut butter" },
+        { "ingredient": "cocoa-powder", "quantity": 10, "unit": "g", "display": "10g cocoa powder" }
+      ],
+      "mixins": [
+        { "ingredient": "peanut-butter-smooth", "quantity": 12, "unit": "g", "display": "12g warmed smooth peanut butter" }
+      ],
+      "mixin_note": "12g warmed smooth peanut butter."
+    },
+    {
+      "slug": "mint-choc-chip", "name": "Mint Choc Chip", "category": "chocolate", "base": "everyday",
+      "profile": "Cool mint vanilla with thin chocolate shards.",
+      "tip": "Start with two drops of peppermint and taste.",
+      "reference_kcal": 475, "reference_protein_g": 61,
+      "additions": [
+        { "ingredient": "peppermint-extract", "quantity": 0.15, "unit": "ml", "display": "2–4 drops peppermint extract" },
+        { "ingredient": "food-colouring", "quantity": 0.5, "unit": "ml", "display": "Green colouring", "optional": true }
+      ],
+      "mixins": [
+        { "ingredient": "dark-chocolate", "quantity": 15, "unit": "g", "display": "15g finely chopped dark chocolate" }
+      ],
+      "mixin_note": "15g finely chopped dark chocolate."
+    },
+    {
+      "slug": "rocky-road", "name": "Rocky Road", "category": "chocolate", "base": "choc",
+      "profile": "Chocolate with marshmallow, nut and chocolate pieces.",
+      "tip": "Small pieces distribute more evenly through the tub.",
+      "reference_kcal": 551, "reference_protein_g": 65,
+      "additions": [
+        { "ingredient": "cocoa-powder", "quantity": 12, "unit": "g", "display": "12g cocoa powder" }
+      ],
+      "mixins": [
+        { "ingredient": "mini-marshmallows", "quantity": 10, "unit": "g", "display": "10g mini marshmallows" },
+        { "ingredient": "almonds-chopped", "quantity": 8, "unit": "g", "display": "8g almonds" },
+        { "ingredient": "dark-chocolate", "quantity": 8, "unit": "g", "display": "8g dark chocolate" }
+      ],
+      "mixin_note": "10g mini marshmallows, 8g almonds and 8g dark chocolate."
+    },
+    {
+      "slug": "smores", "name": "S'mores", "category": "chocolate", "base": "choc",
+      "profile": "Chocolate ice cream with biscuit, marshmallow and chocolate pieces.",
+      "tip": "Keep every mix-in fairly small so all three elements distribute through the full Deluxe tub.",
+      "reference_kcal": 558, "reference_protein_g": 64,
+      "additions": [
+        { "ingredient": "cocoa-powder", "quantity": 10, "unit": "g", "display": "10g cocoa powder" },
+        { "ingredient": "vanilla-extract", "quantity": 1, "unit": "ml", "display": "A few drops vanilla" },
+        { "ingredient": "fine-salt", "quantity": 0.5, "unit": "g", "display": "Pinch of salt" }
+      ],
+      "mixins": [
+        { "ingredient": "digestive-light", "quantity": 1, "unit": "item", "display": "1 light digestive" },
+        { "ingredient": "mini-marshmallows", "quantity": 10, "unit": "g", "display": "10g mini marshmallows" },
+        { "ingredient": "dark-chocolate", "quantity": 8, "unit": "g", "display": "8g chocolate chunks" }
+      ],
+      "mixin_note": "1 light digestive, 10g mini marshmallows and 8g chocolate chunks."
+    },
+    {
+      "slug": "chocolate-orange", "name": "Chocolate Orange", "category": "chocolate", "base": "choc",
+      "profile": "Dark chocolate with bright fresh orange zest.",
+      "tip": "Use zest before extract, it tastes fresher and is harder to overdo.",
+      "reference_kcal": 485, "reference_protein_g": 66,
+      "additions": [
+        { "ingredient": "cocoa-powder", "quantity": 15, "unit": "g", "display": "15g cocoa powder" },
+        { "ingredient": "citrus-zest", "quantity": 4, "unit": "g", "display": "Zest of 1 orange" }
+      ],
+      "mixins": [
+        { "ingredient": "dark-chocolate", "quantity": 8, "unit": "g", "display": "8g chopped dark chocolate" }
+      ],
+      "mixin_note": "8g chopped dark chocolate."
+    },
+    {
+      "slug": "white-chocolate-raspberry", "name": "White Chocolate Raspberry", "category": "chocolate", "base": "dessert",
+      "profile": "Sweet white chocolate balanced by a sharp raspberry ripple.",
+      "tip": "Add the raspberry only after spinning so the ice cream keeps a visible ripple rather than turning uniformly pink.",
+      "reference_kcal": 512, "reference_protein_g": 62,
+      "additions": [
+        { "ingredient": "flavour-drops", "quantity": 2, "unit": "ml", "display": "White-chocolate flavour drops to taste" },
+        { "ingredient": "vanilla-extract", "quantity": 2.2, "unit": "ml", "display": "1/2 tsp vanilla" },
+        { "ingredient": "fine-salt", "quantity": 0.5, "unit": "g", "display": "Pinch of salt" }
+      ],
+      "mixins": [
+        { "ingredient": "raspberry-compote", "quantity": 60, "unit": "g", "display": "60g cooled raspberry compote" },
+        { "ingredient": "white-chocolate", "quantity": 12, "unit": "g", "display": "12g finely chopped white chocolate" }
+      ],
+      "mixin_note": "60g cooled raspberry compote plus 12g finely chopped white chocolate."
+    },
+    {
+      "slug": "kinder-style-hazelnut", "name": "Kinder-Style Hazelnut", "category": "chocolate", "base": "dessert",
+      "profile": "Milky chocolate and hazelnut with a crisp wafer finish.",
+      "tip": "Vanilla or milk-chocolate protein works better than dark chocolate here.",
+      "reference_kcal": 548, "reference_protein_g": 67,
+      "additions": [
+        { "ingredient": "cocoa-powder", "quantity": 10, "unit": "g", "display": "10g cocoa powder" },
+        { "ingredient": "hazelnut-butter", "quantity": 12, "unit": "g", "display": "12g hazelnut butter" }
+      ],
+      "mixins": [
+        { "ingredient": "kinder-bueno-mini", "quantity": 1, "unit": "item", "display": "1 mini Kinder Bueno finger or 12g wafer" }
+      ],
+      "mixin_note": "1 mini Kinder Bueno finger or 12g wafer."
+    }
+  ]
+}

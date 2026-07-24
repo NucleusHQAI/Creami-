@@ -1,0 +1,42 @@
+[
+  {
+    "key": "classic",
+    "label": "Creamy classics",
+    "emoji": "🍦",
+    "accent": "#d49b29",
+    "tint": "#fff1cf",
+    "sort_order": 1
+  },
+  {
+    "key": "fruit",
+    "label": "Fruit & cheesecake",
+    "emoji": "🍓",
+    "accent": "#d94468",
+    "tint": "#ffe7ee",
+    "sort_order": 2
+  },
+  {
+    "key": "bakery",
+    "label": "Bakery & biscuit",
+    "emoji": "🥨",
+    "accent": "#a9673a",
+    "tint": "#f4e5d8",
+    "sort_order": 3
+  },
+  {
+    "key": "coffee",
+    "label": "Coffee & caramel",
+    "emoji": "☕",
+    "accent": "#755143",
+    "tint": "#eee2dc",
+    "sort_order": 4
+  },
+  {
+    "key": "chocolate",
+    "label": "Chocolate",
+    "emoji": "🍫",
+    "accent": "#50342e",
+    "tint": "#ece0dc",
+    "sort_order": 5
+  }
+]

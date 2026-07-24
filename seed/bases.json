@@ -1,0 +1,115 @@
+{
+  "_meta": {
+    "fill_ingredient": "Every base nominates one ingredient as the fill ingredient. Its listed quantity is the starting amount; the macro engine then tops that ingredient up until the tub reaches the configured MAX FILL volume (default 680ml). This is what makes the totals honest — a recipe with 160g of mango needs less top-up milk than a plain vanilla one, and the calculated macros reflect that automatically.",
+    "quantities": "Quantities are per one full Deluxe tub."
+  },
+  "bases": [
+    {
+      "key": "everyday",
+      "name": "Everyday creamy",
+      "tagline": "Best all-rounder",
+      "summary": "For vanilla, caramel, coffee and biscuit flavours.",
+      "guidance": "The default base. Blend the protein powder and xanthan gum together dry before adding liquid so the xanthan disperses without clumping.",
+      "is_variation_of": null,
+      "fill_ingredient": "semi-skimmed-milk",
+      "sort_order": 1,
+      "ingredients": [
+        { "ingredient": "semi-skimmed-milk", "quantity": 410, "unit": "ml" },
+        { "ingredient": "greek-yoghurt-0", "quantity": 200, "unit": "g", "note": "Or skyr" },
+        { "ingredient": "whey-casein-vanilla", "quantity": 45, "unit": "g" },
+        { "ingredient": "xanthan-gum", "quantity": 0.35, "unit": "g", "note": "1/8 tsp" },
+        { "ingredient": "granulated-sweetener", "quantity": 8, "unit": "g", "note": "To taste" },
+        { "ingredient": "fine-salt", "quantity": 0.5, "unit": "g", "note": "A pinch" }
+      ]
+    },
+    {
+      "key": "fruit",
+      "name": "Fruit and yoghurt",
+      "tagline": "Fruit & light days",
+      "summary": "More room for banana, mango, berries or cooked apple.",
+      "guidance": "Leaves headroom for 100–160g of fruit. Blend fruit completely smooth to avoid icy pockets. Xanthan is optional for banana but useful for berries.",
+      "is_variation_of": null,
+      "fill_ingredient": "semi-skimmed-milk",
+      "sort_order": 2,
+      "ingredients": [
+        { "ingredient": "semi-skimmed-milk", "quantity": 325, "unit": "ml" },
+        { "ingredient": "greek-yoghurt-0", "quantity": 185, "unit": "g" },
+        { "ingredient": "whey-casein-vanilla", "quantity": 42, "unit": "g" },
+        { "ingredient": "xanthan-gum", "quantity": 0.35, "unit": "g", "note": "1/8 tsp" },
+        { "ingredient": "granulated-sweetener", "quantity": 8, "unit": "g", "note": "To taste" }
+      ]
+    },
+    {
+      "key": "choc",
+      "name": "Chocolate creamy",
+      "tagline": "Chocolate recipes",
+      "summary": "The Everyday creamy base, using chocolate protein and cocoa.",
+      "guidance": "Cocoa quantity comes from the individual recipe. Dutch-process cocoa gives a rounder, darker flavour.",
+      "is_variation_of": "everyday",
+      "fill_ingredient": "semi-skimmed-milk",
+      "sort_order": 3,
+      "ingredients": [
+        { "ingredient": "semi-skimmed-milk", "quantity": 410, "unit": "ml" },
+        { "ingredient": "greek-yoghurt-0", "quantity": 200, "unit": "g", "note": "Or skyr" },
+        { "ingredient": "whey-casein-chocolate", "quantity": 45, "unit": "g" },
+        { "ingredient": "xanthan-gum", "quantity": 0.35, "unit": "g", "note": "1/8 tsp" },
+        { "ingredient": "granulated-sweetener", "quantity": 8, "unit": "g", "note": "To taste" },
+        { "ingredient": "fine-salt", "quantity": 0.5, "unit": "g", "note": "A pinch" }
+      ]
+    },
+    {
+      "key": "dessert",
+      "name": "Dessert-style",
+      "tagline": "Richer flavours",
+      "summary": "Quark and a little light cream cheese for a denser, more dessert-like finish.",
+      "guidance": "Use when the recipe specifies Dessert-style. Fat-free cottage cheese can replace quark gram for gram, but blend it completely smooth first.",
+      "is_variation_of": null,
+      "fill_ingredient": "semi-skimmed-milk",
+      "sort_order": 4,
+      "ingredients": [
+        { "ingredient": "semi-skimmed-milk", "quantity": 370, "unit": "ml" },
+        { "ingredient": "quark-fat-free", "quantity": 175, "unit": "g" },
+        { "ingredient": "whey-casein-vanilla", "quantity": 45, "unit": "g" },
+        { "ingredient": "light-cream-cheese", "quantity": 20, "unit": "g" },
+        { "ingredient": "xanthan-gum", "quantity": 0.35, "unit": "g", "note": "1/8 tsp" },
+        { "ingredient": "granulated-sweetener", "quantity": 8, "unit": "g", "note": "To taste" }
+      ]
+    },
+    {
+      "key": "cheesecake",
+      "name": "Cheesecake",
+      "tagline": "Cheesecake flavours",
+      "summary": "The dessert-style base, tuned for tangy cheesecake flavours.",
+      "guidance": "For the cleanest cheesecake texture, quark is the first choice over cottage cheese. A squeeze of lemon juice sharpens the tang on any flavour in this base.",
+      "is_variation_of": "dessert",
+      "fill_ingredient": "semi-skimmed-milk",
+      "sort_order": 5,
+      "ingredients": [
+        { "ingredient": "semi-skimmed-milk", "quantity": 370, "unit": "ml" },
+        { "ingredient": "quark-fat-free", "quantity": 175, "unit": "g" },
+        { "ingredient": "whey-casein-vanilla", "quantity": 45, "unit": "g" },
+        { "ingredient": "light-cream-cheese", "quantity": 20, "unit": "g" },
+        { "ingredient": "xanthan-gum", "quantity": 0.35, "unit": "g", "note": "1/8 tsp" },
+        { "ingredient": "granulated-sweetener", "quantity": 8, "unit": "g", "note": "To taste" }
+      ]
+    },
+    {
+      "key": "coconut",
+      "name": "Coconut",
+      "tagline": "Tropical flavours",
+      "summary": "The fruit base with part of the milk replaced by light coconut milk.",
+      "guidance": "Light coconut milk tastes more convincing than coconut extract alone.",
+      "is_variation_of": "fruit",
+      "fill_ingredient": "semi-skimmed-milk",
+      "sort_order": 6,
+      "ingredients": [
+        { "ingredient": "semi-skimmed-milk", "quantity": 245, "unit": "ml" },
+        { "ingredient": "light-coconut-milk", "quantity": 80, "unit": "ml" },
+        { "ingredient": "greek-yoghurt-0", "quantity": 185, "unit": "g" },
+        { "ingredient": "whey-casein-vanilla", "quantity": 42, "unit": "g" },
+        { "ingredient": "xanthan-gum", "quantity": 0.35, "unit": "g", "note": "1/8 tsp" },
+        { "ingredient": "granulated-sweetener", "quantity": 8, "unit": "g", "note": "To taste" }
+      ]
+    }
+  ]
+}
