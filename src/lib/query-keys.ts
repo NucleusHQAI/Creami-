@@ -28,6 +28,7 @@ export const queryKeys = {
     plan: ['shopping', 'plan'] as const,
     extras: ['shopping', 'extras'] as const,
     checks: ['shopping', 'checks'] as const,
+    recipeOptions: ['shopping', 'recipeOptions'] as const,
   },
   settings: { all: ['settings'] as const },
 } as const
