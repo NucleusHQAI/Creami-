@@ -2,6 +2,8 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from '
 import type { Session } from '@supabase/supabase-js'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
+import { ErrorBoundary } from '@/app/ErrorBoundary'
+import { ToastProvider } from '@/app/ToastProvider'
 
 interface AuthContextValue {
   session: Session | null
@@ -54,6 +56,9 @@ export function useAuth(): AuthContextValue {
   return context
 }
 
+// refetchOnWindowFocus is off by default; the active-batches query (Task 28)
+// opts back in explicitly, since that's the one case where a stale answer
+// ("nothing ready") is actively misleading.
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -65,8 +70,12 @@ const queryClient = new QueryClient({
 
 export function AppProviders({ children }: { children: ReactNode }) {
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>{children}</AuthProvider>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <ToastProvider>{children}</ToastProvider>
+        </AuthProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   )
 }
