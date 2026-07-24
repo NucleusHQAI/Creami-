@@ -63,3 +63,21 @@ export function formatQuantity(quantity: number, unit: Unit): string {
   const rounded = Math.round(quantity)
   return `${rounded}${unit}`
 }
+
+/**
+ * Rounds a shopping-list total for a human, not a lab: whole numbers below
+ * 50, the nearest 5 from there up to a litre or kilo, then one decimal in
+ * litres or kilos beyond that. Nobody measures 347ml of milk into a trolley.
+ * Item counts don't go through this — they round up wherever they're
+ * totalled, because that has to be true of the number itself, not just its
+ * display.
+ */
+export function formatShoppingQuantity(quantity: number, unit: 'g' | 'ml'): string {
+  if (quantity >= 1000) {
+    const large = Math.round(quantity / 100) / 10
+    return `${large}${unit === 'ml' ? 'L' : 'kg'}`
+  }
+
+  const rounded = quantity > 50 ? Math.round(quantity / 5) * 5 : Math.round(quantity)
+  return `${rounded}${unit}`
+}
