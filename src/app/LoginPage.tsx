@@ -45,6 +45,8 @@ export default function LoginPage() {
               required
               value={email}
               onChange={(event) => setEmail(event.target.value)}
+              aria-describedby={error ? 'login-error' : undefined}
+              aria-invalid={error ? true : undefined}
               className="h-11 w-full rounded-soft border border-line bg-cream px-3 text-ink focus-visible:outline-none"
             />
           </div>
@@ -59,11 +61,13 @@ export default function LoginPage() {
               required
               value={password}
               onChange={(event) => setPassword(event.target.value)}
+              aria-describedby={error ? 'login-error' : undefined}
+              aria-invalid={error ? true : undefined}
               className="h-11 w-full rounded-soft border border-line bg-cream px-3 text-ink focus-visible:outline-none"
             />
           </div>
           {error && (
-            <p role="alert" className="text-[13px] text-berry">
+            <p id="login-error" role="alert" className="text-[13px] text-berry">
               {error}
             </p>
           )}
