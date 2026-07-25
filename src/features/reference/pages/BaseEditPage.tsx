@@ -280,7 +280,9 @@ function BaseEditForm({ base, ingredients, settings }: BaseEditFormProps) {
         <p className="text-[15px] text-ink">
           {usage.isLoading
             ? 'Checking how many recipes this affects…'
-            : `This will change the macros of ${usage.data ?? 0} recipe${usage.data === 1 ? '' : 's'}.`}
+            : usage.isError
+              ? "Couldn't check how many recipes this affects — saving will still change all of them."
+              : `This will change the macros of ${usage.data ?? 0} recipe${usage.data === 1 ? '' : 's'}.`}
         </p>
         <div className="mt-4 flex items-center gap-3">
           <Button type="button" onClick={handleConfirm} disabled={updateBase.isPending}>

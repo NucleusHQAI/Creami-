@@ -1,11 +1,12 @@
 import { Trash2 } from 'lucide-react'
 import { IconButton } from '@/components/ui/IconButton'
 import { Skeleton } from '@/components/ui/Skeleton'
+import { ErrorState } from '@/components/ui/ErrorState'
 import { AddExtraField } from '@/features/shopping/components/AddExtraField'
 import { useDeleteExtra, useExtras, useToggleExtra } from '@/features/shopping/hooks/useExtras'
 
 export function ExtrasSection() {
-  const { data: extras, isLoading } = useExtras()
+  const { data: extras, isLoading, isError, refetch } = useExtras()
   const toggleExtra = useToggleExtra()
   const deleteExtra = useDeleteExtra()
 
@@ -16,6 +17,8 @@ export function ExtrasSection() {
       </h2>
       {isLoading ? (
         <Skeleton className="h-11 w-full" />
+      ) : isError ? (
+        <ErrorState message="Couldn't load your added items." onRetry={refetch} />
       ) : (extras ?? []).length === 0 ? (
         <p className="text-[13px] text-muted">Nothing added yet.</p>
       ) : (

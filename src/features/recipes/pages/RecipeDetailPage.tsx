@@ -45,9 +45,19 @@ export default function RecipeDetailPage() {
   const { slug } = useParams<{ slug: string }>()
   const navigate = useNavigate()
   const { data: recipe, isLoading, isError, refetch } = useRecipe(slug)
-  const { data: bases } = useBases()
-  const { data: ingredients } = useIngredients()
-  const { data: settings } = useSettings()
+  const { data: bases, isLoading: isBasesLoading, isError: isBasesError, refetch: refetchBases } = useBases()
+  const {
+    data: ingredients,
+    isLoading: isIngredientsLoading,
+    isError: isIngredientsError,
+    refetch: refetchIngredients,
+  } = useIngredients()
+  const {
+    data: settings,
+    isLoading: isSettingsLoading,
+    isError: isSettingsError,
+    refetch: refetchSettings,
+  } = useSettings()
   const toggleFavourite = useToggleFavourite()
   const { archiveWithUndo, isPending: isArchiving } = useArchiveRecipe()
   const duplicateRecipe = useDuplicateRecipe()
@@ -88,7 +98,7 @@ export default function RecipeDetailPage() {
     })
   }
 
-  if (isLoading) {
+  if (isLoading || isBasesLoading || isIngredientsLoading || isSettingsLoading) {
     return (
       <div className="space-y-4">
         <Skeleton className="h-8 w-2/3" />
@@ -101,6 +111,19 @@ export default function RecipeDetailPage() {
 
   if (isError || !recipe) {
     return <ErrorState message="Couldn't load this recipe." onRetry={refetch} />
+  }
+
+  if (isBasesError || isIngredientsError || isSettingsError) {
+    return (
+      <ErrorState
+        message="Couldn't load this recipe's macros."
+        onRetry={() => {
+          void refetchBases()
+          void refetchIngredients()
+          void refetchSettings()
+        }}
+      />
+    )
   }
 
   const additions = recipe.ingredients
