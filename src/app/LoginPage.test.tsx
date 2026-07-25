@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
+import { expect, test, vi } from 'vitest'
 import LoginPage from '@/app/LoginPage'
 import { useAuth } from '@/app/providers'
 import { expectNoAxeViolations } from '@/test/accessibility'

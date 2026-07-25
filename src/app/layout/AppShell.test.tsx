@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
+import { expect, test } from 'vitest'
 import { AppShell } from '@/app/layout/AppShell'
 import { expectNoAxeViolations } from '@/test/accessibility'
 
