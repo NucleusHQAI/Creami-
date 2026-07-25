@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useToast } from '@/app/ToastProvider'
 import { addExtra, deleteExtra, fetchExtras, toggleExtra } from '@/lib/api/shopping'
-import { queryKeys } from '@/lib/query-keys'
+import { mutationKeys, queryKeys } from '@/lib/query-keys'
 import type { ShoppingExtra } from '@/types/domain'
 
 export function useExtras() {
@@ -38,6 +38,7 @@ export function useToggleExtra() {
   const { showToast } = useToast()
 
   return useMutation({
+    mutationKey: mutationKeys.toggleExtra,
     mutationFn: ({ id, next }: { id: string; next: boolean }) => toggleExtra(id, next),
     onMutate: async ({ id, next }) => {
       await queryClient.cancelQueries({ queryKey: queryKeys.shopping.extras })

@@ -14,6 +14,7 @@ import { RecipePickerSheet } from '@/features/freezer/components/RecipePickerShe
 import { LogBatchSheet } from '@/features/freezer/components/LogBatchSheet'
 import { groupActiveBatches } from '@/lib/freezer-status'
 import type { RecipeOption } from '@/lib/api/batches'
+import { useOnlineStatus } from '@/lib/online-status'
 
 const COUNTDOWN_REFRESH_MS = 60_000
 
@@ -30,6 +31,7 @@ function FreezerSkeleton() {
 
 export default function FreezerPage() {
   const { data: batches, isLoading, isError, refetch } = useActiveBatches()
+  const isOnline = useOnlineStatus()
 
   const [now, setNow] = useState(() => new Date())
   useEffect(() => {
@@ -81,6 +83,8 @@ export default function FreezerPage() {
         type="button"
         onClick={() => setPickerOpen(true)}
         aria-label="Log a batch"
+        disabled={!isOnline}
+        title={!isOnline ? 'Reconnect to log a batch.' : undefined}
         className="fixed bottom-24 right-4 z-30 flex h-14 w-14 items-center justify-center rounded-pill bg-ink text-cream shadow-lift transition-transform motion-safe:duration-150 motion-safe:active:scale-95 sm:bottom-8 sm:right-8"
       >
         <Plus size={24} aria-hidden="true" />

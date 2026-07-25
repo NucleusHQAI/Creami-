@@ -1,8 +1,13 @@
 import type { ReactNode } from 'react'
 import { TopBar } from '@/app/layout/TopBar'
 import { BottomNav } from '@/app/layout/BottomNav'
+import { OfflineBanner } from '@/components/OfflineBanner'
+import { useOnlineStatus, usePausedMutationCount } from '@/lib/online-status'
 
 export function AppShell({ children }: { children: ReactNode }) {
+  const isOnline = useOnlineStatus()
+  const pendingCount = usePausedMutationCount()
+
   return (
     <div className="min-h-dvh bg-cream">
       <a
@@ -12,6 +17,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         Skip to main content
       </a>
       <TopBar />
+      <OfflineBanner isOnline={isOnline} pendingCount={pendingCount} />
       <main
         id="main-content"
         tabIndex={-1}

@@ -19,6 +19,7 @@ export interface BaseIngredientInput {
 }
 
 export interface BaseInput {
+  fillIngredientId: string
   ingredients: BaseIngredientInput[]
 }
 
@@ -29,6 +30,12 @@ export interface BaseInput {
  * recipe itself needs to change.
  */
 export async function updateBase(id: string, input: BaseInput): Promise<void> {
+  const { error: baseError } = await supabase
+    .from('bases')
+    .update({ fill_ingredient_id: input.fillIngredientId })
+    .eq('id', id)
+  if (baseError) throw baseError
+
   const { error: deleteError } = await supabase.from('base_ingredients').delete().eq('base_id', id)
   if (deleteError) throw deleteError
 

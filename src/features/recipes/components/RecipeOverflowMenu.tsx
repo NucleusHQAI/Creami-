@@ -2,6 +2,7 @@ import { useEffect, useId, useRef, useState, type KeyboardEvent } from 'react'
 import { Copy, MoreVertical, Pencil, ShoppingCart, Snowflake, Trash2 } from 'lucide-react'
 import { IconButton } from '@/components/ui/IconButton'
 import { useToast } from '@/app/ToastProvider'
+import { useOnlineStatus } from '@/lib/online-status'
 
 export interface RecipeOverflowMenuProps {
   onEdit: () => void
@@ -30,6 +31,7 @@ export function RecipeOverflowMenu({
 }: RecipeOverflowMenuProps) {
   const [open, setOpen] = useState(false)
   const { showToast } = useToast()
+  const isOnline = useOnlineStatus()
   const addToShoppingList = onAddToShoppingList ?? (() => showToast('Add to shopping list — coming soon'))
   const logBatch = onLogBatch ?? (() => showToast('Log a batch — coming soon'))
   const containerRef = useRef<HTMLDivElement>(null)
@@ -57,6 +59,12 @@ export function RecipeOverflowMenu({
 
   function runAndClose(action: () => void) {
     setOpen(false)
+
+    if (!isOnline) {
+      showToast('Reconnect to change this recipe.')
+      return
+    }
+
     action()
   }
 
@@ -122,8 +130,10 @@ export function RecipeOverflowMenu({
               }}
               type="button"
               role="menuitem"
+              aria-disabled={!isOnline}
+              title={!isOnline ? 'Reconnect to change this recipe.' : undefined}
               onClick={() => runAndClose(item.action)}
-              className={`flex w-full items-center gap-3 px-4 py-2.5 text-left text-[14px] hover:bg-cream ${item.danger ? 'text-berry' : 'text-ink'}`}
+              className={`flex w-full items-center gap-3 px-4 py-2.5 text-left text-[14px] hover:bg-cream aria-disabled:cursor-not-allowed aria-disabled:opacity-50 ${item.danger ? 'text-berry' : 'text-ink'}`}
             >
               <item.icon size={16} aria-hidden="true" />
               {item.label}

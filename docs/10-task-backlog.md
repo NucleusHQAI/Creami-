@@ -6,6 +6,15 @@
 
 Phases 1–6 (tasks 1–35) produce a genuinely usable app. Everything after is refinement.
 
+## Current status
+
+- Tasks 1–43 are implemented.
+- Task 44 is deferred until the protein powder, Greek yoghurt, quark and milk nutrition labels can be checked in the household cupboard. The app remains usable with approximate values meanwhile.
+- Task 45 is implemented. Deployed builds generate the manifest, service worker, icons and update prompt.
+- Task 46 is implemented in code; the real-device offline checklist remains to be recorded.
+- Task 47 is ready but blocked on Netlify authentication.
+- Task 48 remains a manual phone acceptance walkthrough.
+
 | Phase | Tasks | Outcome |
 |---|---|---|
 | 1 · Foundations | 1–8 | Project, database, seeded data, login |
@@ -499,7 +508,7 @@ Connect the repo to Netlify. Build command, publish directory, environment varia
 
 On a real phone, on the production URL, complete all seven journeys from the brief without touching a desktop. Record what breaks. Fix anything that stops a journey; log anything cosmetic as an issue.
 
-Then check the whole app for personal names — no "Antony", no "Maddie", no per-person groupings, in the UI, the seed data or the code.
+Then check the whole app for personal names or per-person groupings in the UI, seed data and code.
 
 **Done when:** all seven journeys complete on a phone, and the name check is clean.
 

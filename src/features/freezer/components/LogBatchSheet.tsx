@@ -7,6 +7,7 @@ import { useToast } from '@/app/ToastProvider'
 import { useSettings } from '@/features/reference/hooks/useSettings'
 import { useCreateBatch } from '@/features/freezer/hooks/useCreateBatch'
 import { computeReadyAt, formatReadyAt } from '@/lib/freezer-status'
+import { useOnlineStatus } from '@/lib/online-status'
 
 export interface LogBatchSheetProps {
   recipeId: string
@@ -28,6 +29,7 @@ export function LogBatchSheet({ recipeId, recipeName, open, onClose }: LogBatchS
   const { data: settings } = useSettings()
   const { mutate: createBatch, isPending } = useCreateBatch()
   const { showToast } = useToast()
+  const isOnline = useOnlineStatus()
 
   const [showTimeInput, setShowTimeInput] = useState(false)
   const [frozenAt, setFrozenAt] = useState(() => new Date())
@@ -45,6 +47,11 @@ export function LogBatchSheet({ recipeId, recipeName, open, onClose }: LogBatchS
   }
 
   function handleConfirm() {
+    if (!isOnline) {
+      showToast('Reconnect to log a batch.', { variant: 'error' })
+      return
+    }
+
     createBatch(
       { recipeId, frozenAt, notes: notes.trim() || undefined },
       {
@@ -117,7 +124,12 @@ export function LogBatchSheet({ recipeId, recipeName, open, onClose }: LogBatchS
           {readyAt ? `Ready to spin ${formatReadyAt(readyAt)}.` : 'Calculating ready time…'}
         </p>
 
-        <Button className="w-full" onClick={handleConfirm} disabled={isPending}>
+        <Button
+          className="w-full"
+          onClick={handleConfirm}
+          disabled={isPending || !isOnline}
+          title={!isOnline ? 'Reconnect to log a batch.' : undefined}
+        >
           {isPending ? 'Logging…' : 'Log batch'}
         </Button>
       </div>

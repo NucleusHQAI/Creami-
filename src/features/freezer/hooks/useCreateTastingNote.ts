@@ -9,6 +9,7 @@ export function useCreateTastingNote() {
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.tastingNotes.forRecipe(variables.recipeId) })
       queryClient.invalidateQueries({ queryKey: queryKeys.recipeRatings.forRecipe(variables.recipeId) })
+      queryClient.invalidateQueries({ queryKey: queryKeys.recipes.all })
     },
   })
 }

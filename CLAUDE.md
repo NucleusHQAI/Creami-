@@ -8,7 +8,7 @@ Read this before writing code in this repo. It exists so that work done by diffe
 2. **Read the feature spec your task names.** Every task in `docs/10-task-backlog.md` points at one. It has the details this file does not.
 3. **The seed data in `seed/` is finished.** Convert it, do not rewrite it, do not invent extra recipes or ingredients.
 4. **British English throughout**, in the UI and in comments. Flavour, colour, yoghurt, favourite.
-5. **No personal names anywhere.** The original document had sections built around two named people. They are gone on purpose and must not come back — no "Antony's picks", no per-person labels on recipe cards, no named starter rotation.
+5. **No personal names anywhere.** The original document had sections built around named people. They are gone on purpose and must not come back — no person-specific picks, no per-person labels on recipe cards, no named starter rotation.
 
 ## Language and tooling
 

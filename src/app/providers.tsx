@@ -1,9 +1,19 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import type { Session } from '@supabase/supabase-js'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { onlineManager, QueryClient } from '@tanstack/react-query'
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import { supabase } from '@/lib/supabase'
 import { ErrorBoundary } from '@/app/ErrorBoundary'
 import { ToastProvider } from '@/app/ToastProvider'
+import {
+  createQueryPersister,
+  resumePausedMutationsAndRefresh,
+  shouldPersistMutation,
+} from '@/lib/query-persister'
+import { toggleFavourite } from '@/lib/api/recipes'
+import { markFinished, markSpun, type MarkSpunInput } from '@/lib/api/batches'
+import { setCheck, toggleExtra } from '@/lib/api/shopping'
+import { mutationKeys } from '@/lib/query-keys'
 
 interface AuthContextValue {
   session: Session | null
@@ -62,20 +72,86 @@ export function useAuth(): AuthContextValue {
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
+      gcTime: Infinity,
       retry: 1,
       refetchOnWindowFocus: false,
+    },
+    mutations: {
+      networkMode: 'always',
     },
   },
 })
 
+queryClient.setMutationDefaults(mutationKeys.toggleFavourite, {
+  mutationFn: ({ id, next }: { id: string; next: boolean }) => toggleFavourite(id, next),
+  networkMode: 'online',
+  retry: 3,
+})
+queryClient.setMutationDefaults(mutationKeys.setCheck, {
+  mutationFn: ({ ingredientId, next }: { ingredientId: string; next: boolean }) =>
+    setCheck(ingredientId, next),
+  networkMode: 'online',
+  retry: 3,
+})
+queryClient.setMutationDefaults(mutationKeys.toggleExtra, {
+  mutationFn: ({ id, next }: { id: string; next: boolean }) => toggleExtra(id, next),
+  networkMode: 'online',
+  retry: 3,
+})
+queryClient.setMutationDefaults(mutationKeys.markSpun, {
+  mutationFn: ({
+    id,
+    input,
+    spunAt,
+  }: {
+    id: string
+    input: MarkSpunInput
+    spunAt: string
+  }) => markSpun(id, input, spunAt),
+  networkMode: 'online',
+  retry: 3,
+})
+queryClient.setMutationDefaults(mutationKeys.markFinished, {
+  mutationFn: ({ id, finishedAt }: { id: string; finishedAt: string }) =>
+    markFinished(id, finishedAt),
+  networkMode: 'online',
+  retry: 3,
+})
+
+const queryPersister = createQueryPersister()
+const THIRTY_DAYS_MS = 1000 * 60 * 60 * 24 * 30
+
 export function AppProviders({ children }: { children: ReactNode }) {
+  useEffect(
+    () =>
+      onlineManager.subscribe((isOnline) => {
+        if (!isOnline) {
+          return
+        }
+
+        void resumePausedMutationsAndRefresh(queryClient)
+      }),
+    [],
+  )
+
   return (
     <ErrorBoundary>
-      <QueryClientProvider client={queryClient}>
+      <PersistQueryClientProvider
+        client={queryClient}
+        persistOptions={{
+          persister: queryPersister,
+          maxAge: THIRTY_DAYS_MS,
+          buster: import.meta.env.VITE_APP_VERSION ?? '0.1.0',
+          dehydrateOptions: {
+            shouldDehydrateMutation: shouldPersistMutation,
+          },
+        }}
+        onSuccess={() => resumePausedMutationsAndRefresh(queryClient)}
+      >
         <AuthProvider>
           <ToastProvider>{children}</ToastProvider>
         </AuthProvider>
-      </QueryClientProvider>
+      </PersistQueryClientProvider>
     </ErrorBoundary>
   )
 }

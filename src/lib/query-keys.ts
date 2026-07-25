@@ -70,3 +70,11 @@ export const queryKeys = {
     previewRecipe: ['settings', 'previewRecipe'] as const,
   },
 } as const
+
+export const mutationKeys = {
+  toggleFavourite: ['toggleFavourite'] as const,
+  setCheck: ['setCheck'] as const,
+  toggleExtra: ['toggleExtra'] as const,
+  markSpun: ['markSpun'] as const,
+  markFinished: ['markFinished'] as const,
+} as const

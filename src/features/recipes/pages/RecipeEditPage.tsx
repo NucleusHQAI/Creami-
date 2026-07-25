@@ -29,6 +29,9 @@ import {
   type RecipeFormValues,
 } from '@/features/recipes/recipe-form-schema'
 import { ensureUniqueSlug, slugify } from '@/lib/slug'
+import { useOnlineStatus } from '@/lib/online-status'
+import { EmptyState } from '@/components/ui/EmptyState'
+import { WifiOff } from 'lucide-react'
 
 const textareaClass =
   'h-24 w-full rounded-soft border border-line bg-cream px-3 py-2 text-[14px] text-ink focus-visible:outline-none'
@@ -39,6 +42,7 @@ export default function RecipeEditPage() {
   const isEditing = Boolean(slug)
   const navigate = useNavigate()
   const { showToast } = useToast()
+  const isOnline = useOnlineStatus()
 
   const { data: existingRecipe, isLoading, isError, refetch } = useRecipe(slug)
   const {
@@ -143,6 +147,16 @@ export default function RecipeEditPage() {
         },
         onError: () => showToast("Couldn't save this recipe — try again", { variant: 'error' }),
       },
+    )
+  }
+
+  if (!isOnline) {
+    return (
+      <EmptyState
+        icon={WifiOff}
+        title="Recipe editing is unavailable offline"
+        message="Reconnect before creating or editing a recipe. Your saved recipes are still available to read."
+      />
     )
   }
 

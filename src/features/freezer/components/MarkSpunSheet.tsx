@@ -34,7 +34,7 @@ export function MarkSpunSheet({ batchId, recipeName, open, onClose }: MarkSpunSh
 
   function submit(input: { respins: number; milkMl?: number; notes?: string }) {
     markSpun(
-      { id: batchId, input },
+      { id: batchId, input, spunAt: new Date().toISOString() },
       {
         onSuccess: () => {
           showToast(`${recipeName} marked as spun.`)

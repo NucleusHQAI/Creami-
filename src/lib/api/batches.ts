@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase'
+import type { TablesInsert } from '@/types/database.types'
 import type { Batch, BatchStatus } from '@/types/domain'
 
 export interface RecipeSummary {
@@ -55,13 +56,8 @@ export async function createBatch(input: CreateBatchInput): Promise<Batch> {
     .insert({
       recipe_id: input.recipeId,
       frozen_at: frozenAt,
-      // ready_at is NOT NULL in the schema but is unconditionally recomputed
-      // by the set_batch_ready_at trigger from frozen_at + app_settings on
-      // every insert, so this value is a placeholder only — it is never the
-      // value actually persisted. The client must never compute the real one.
-      ready_at: frozenAt,
       notes: input.notes ?? null,
-    })
+    } as TablesInsert<'batches'>)
     .select()
     .single()
   if (error) throw error
@@ -74,7 +70,11 @@ export interface MarkSpunInput {
   notes?: string
 }
 
-export async function markSpun(id: string, input: MarkSpunInput): Promise<void> {
+export async function markSpun(
+  id: string,
+  input: MarkSpunInput,
+  spunAt: string,
+): Promise<void> {
   const update: {
     status: 'spun'
     spun_at: string
@@ -83,7 +83,7 @@ export async function markSpun(id: string, input: MarkSpunInput): Promise<void> 
     notes?: string
   } = {
     status: 'spun',
-    spun_at: new Date().toISOString(),
+    spun_at: spunAt,
     respin_count: input.respins,
   }
   if (input.milkMl !== undefined) update.added_milk_ml = input.milkMl
@@ -93,10 +93,10 @@ export async function markSpun(id: string, input: MarkSpunInput): Promise<void> 
   if (error) throw error
 }
 
-export async function markFinished(id: string): Promise<void> {
+export async function markFinished(id: string, finishedAt: string): Promise<void> {
   const { error } = await supabase
     .from('batches')
-    .update({ status: 'finished', finished_at: new Date().toISOString() })
+    .update({ status: 'finished', finished_at: finishedAt })
     .eq('id', id)
   if (error) throw error
 }

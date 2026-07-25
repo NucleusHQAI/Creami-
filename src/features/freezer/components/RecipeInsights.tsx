@@ -33,7 +33,7 @@ export function RecipeInsights({ recipeId }: RecipeInsightsProps) {
     return null
   }
 
-  if (!batches || batches.length === 0) {
+  if (!batches || !hasEnoughData(batches.length)) {
     return null
   }
 

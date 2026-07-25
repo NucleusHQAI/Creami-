@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useToast } from '@/app/ToastProvider'
 import { clearChecks, fetchChecks, setCheck } from '@/lib/api/shopping'
-import { queryKeys } from '@/lib/query-keys'
+import { mutationKeys, queryKeys } from '@/lib/query-keys'
 
 export function useChecks() {
   return useQuery({
@@ -20,6 +20,7 @@ export function useSetCheck() {
   const { showToast } = useToast()
 
   return useMutation({
+    mutationKey: mutationKeys.setCheck,
     mutationFn: ({ ingredientId, next }: { ingredientId: string; next: boolean }) =>
       setCheck(ingredientId, next),
     onMutate: async ({ ingredientId, next }) => {

@@ -28,9 +28,18 @@ const baseLineSchema = z.object({
   note: z.string(),
 })
 
-const baseEditSchema = z.object({
-  lines: z.array(baseLineSchema).min(1, 'Add at least one ingredient'),
-})
+const baseEditSchema = z
+  .object({
+    fill_ingredient_id: z.string().min(1, 'Choose the fill ingredient'),
+    lines: z.array(baseLineSchema).min(1, 'Add at least one ingredient'),
+  })
+  .refine(
+    (values) => values.lines.some((line) => line.ingredient_id === values.fill_ingredient_id),
+    {
+      message: 'Choose one of the base ingredients',
+      path: ['fill_ingredient_id'],
+    },
+  )
 
 type BaseEditFormValues = z.infer<typeof baseEditSchema>
 
@@ -98,6 +107,7 @@ function BaseEditForm({ base, ingredients, settings }: BaseEditFormProps) {
   } = useForm<BaseEditFormValues>({
     resolver: zodResolver(baseEditSchema),
     defaultValues: {
+      fill_ingredient_id: base.fill_ingredient_id,
       lines: base.ingredients
         .slice()
         .sort((a, b) => a.sort_order - b.sort_order)
@@ -153,6 +163,7 @@ function BaseEditForm({ base, ingredients, settings }: BaseEditFormProps) {
 
   function onValidated(values: BaseEditFormValues) {
     setPendingInput({
+      fillIngredientId: values.fill_ingredient_id,
       ingredients: values.lines.map((line) => ({
         ingredient_id: line.ingredient_id,
         quantity: line.quantity,
@@ -189,6 +200,26 @@ function BaseEditForm({ base, ingredients, settings }: BaseEditFormProps) {
       </div>
 
       <form onSubmit={handleSubmit(onValidated)} className="space-y-4">
+        <Field
+          label="Fill ingredient"
+          error={errors.fill_ingredient_id}
+          hint="This ingredient is topped up to the MAX FILL line."
+        >
+          {(fieldProps) => (
+            <select {...register('fill_ingredient_id')} {...fieldProps} className={inputClasses}>
+              {ingredientsByCategory.map(([category, categoryIngredients]) => (
+                <optgroup key={category} label={formatCategoryLabel(category)}>
+                  {categoryIngredients.map((ingredient) => (
+                    <option key={ingredient.id} value={ingredient.id}>
+                      {ingredient.name}
+                    </option>
+                  ))}
+                </optgroup>
+              ))}
+            </select>
+          )}
+        </Field>
+
         <div className="space-y-3">
           {fields.map((field, index) => (
             <Card key={field.id} className="grid grid-cols-1 gap-3 p-4 sm:grid-cols-[1fr_auto_auto_auto]">

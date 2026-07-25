@@ -24,7 +24,7 @@ export function SpunSection({ batches }: SpunSectionProps) {
   const [finishedTarget, setFinishedTarget] = useState<BatchWithRecipe | null>(null)
 
   function handleMarkFinished(batch: BatchWithRecipe) {
-    markFinished(batch.id, {
+    markFinished({ id: batch.id, finishedAt: new Date().toISOString() }, {
       onSuccess: () => setFinishedTarget(batch),
       onError: () => showToast('Could not mark that batch finished. Try again.', { variant: 'error' }),
     })

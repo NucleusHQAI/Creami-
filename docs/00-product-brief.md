@@ -33,8 +33,8 @@ Because there is exactly one account, anything that would otherwise need per-use
 
 ## What is deliberately dropped
 
-- **"Antony's first six"** and **"Maddie's chocolate picks"** — both sections, and the per-recipe `pick` field that drove them. The `pick` field has already been stripped from `seed/recipes.json`.
-- **"Chocolate for Maddie"** as a category label. It is now just **Chocolate**.
+- **Named starter and chocolate-pick sections** — both sections, and the per-recipe `pick` field that drove them. The `pick` field has already been stripped from `seed/recipes.json`.
+- **A person-specific chocolate category label.** It is now just **Chocolate**.
 - **The named starter rotation.** Favourites and ratings do this job now, and they do it based on what actually got eaten.
 - **The marketing hero.** "Forty lower-calorie, high-protein flavours..." was copy for a document being read once. An app that gets opened daily opens on the recipes.
 - **Hardcoded per-recipe kcal and protein.** The engine computes these. The original figures survive only as calibration reference data (see `docs/04-macro-engine.md`).
