@@ -63,7 +63,7 @@ export default function RecipeListPage() {
       {/* Ready-to-spin banner — docs/05 § Recipe list item 1 / Task 28. */}
       <ReadyBanner />
 
-      <div className="sticky top-0 z-10 -mx-4 space-y-4 bg-cream/95 px-4 pb-3 pt-1 backdrop-blur sm:mx-0 sm:px-0 md:top-16">
+      <div className="sticky top-0 z-20 -mx-4 space-y-4 bg-cream/95 px-4 pb-3 pt-1 backdrop-blur sm:mx-0 sm:px-0 md:top-16">
         <div className="relative">
           <Search
             size={18}

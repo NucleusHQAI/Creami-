@@ -19,7 +19,7 @@ export function RecipeCard({ recipe, kcal, proteinG, onToggleFavourite }: Recipe
 
   return (
     <article
-      className="group relative block overflow-hidden rounded-recipe border border-line bg-paper transition-transform motion-safe:duration-150 motion-safe:hover:-translate-y-[3px] motion-safe:hover:shadow-lift"
+      className="group isolate relative block overflow-hidden rounded-recipe border border-line bg-paper transition-transform motion-safe:duration-150 motion-safe:hover:-translate-y-[3px] motion-safe:hover:shadow-lift"
       style={{ '--accent': recipe.accent ?? undefined, '--tint': recipe.tint ?? undefined } as CSSProperties}
     >
       <div className="relative h-24 bg-[var(--tint)]">
