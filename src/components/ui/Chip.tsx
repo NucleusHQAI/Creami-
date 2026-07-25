@@ -13,10 +13,10 @@ export const Chip = forwardRef<HTMLButtonElement, ChipProps>(function Chip(
       ref={ref}
       type="button"
       aria-pressed={selected}
-      className={`inline-flex h-9 shrink-0 items-center whitespace-nowrap rounded-pill border px-4 text-[13px] font-medium transition-colors motion-safe:duration-150 ${
+      className={`inline-flex h-9 shrink-0 items-center whitespace-nowrap rounded-pill border-2 px-4 text-[13px] font-medium transition-colors motion-safe:duration-150 ${
         selected
-          ? 'border-ink bg-ink text-cream'
-          : 'border-line bg-paper text-ink hover:bg-cream'
+          ? 'border-berry bg-berry text-cream'
+          : 'border-ink bg-paper text-ink hover:bg-cream'
       } ${className}`}
       {...props}
     />
