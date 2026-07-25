@@ -15,7 +15,7 @@ export interface RecipeInsightsProps {
  * never been made.
  */
 export function RecipeInsights({ recipeId }: RecipeInsightsProps) {
-  const { data: batches, isLoading } = useRecipeBatches(recipeId)
+  const { data: batches, isLoading, isError, error } = useRecipeBatches(recipeId)
 
   if (isLoading) {
     return (
@@ -24,6 +24,13 @@ export function RecipeInsights({ recipeId }: RecipeInsightsProps) {
         <Skeleton className="h-7 w-32" />
       </div>
     )
+  }
+
+  if (isError) {
+    // Auxiliary widget — dropping it silently is the right call visually, but
+    // the failure still needs to be logged rather than swallowed outright.
+    console.error(`Couldn't load batch insights for recipe ${recipeId}`, error)
+    return null
   }
 
   if (!batches || batches.length === 0) {

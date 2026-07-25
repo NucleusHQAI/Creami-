@@ -14,6 +14,8 @@ import { useExistingSlugs } from '@/features/recipes/hooks/useExistingSlugs'
 import { useDraftRecipeMacros } from '@/features/recipes/hooks/useDraftRecipeMacros'
 import { useCategories } from '@/features/reference/hooks/useCategories'
 import { useBases } from '@/features/reference/hooks/useBases'
+import { useIngredients } from '@/features/reference/hooks/useIngredients'
+import { useSettings } from '@/features/reference/hooks/useSettings'
 import { BaseSelectField } from '@/features/recipes/components/BaseSelectField'
 import { IngredientLinesEditor } from '@/features/recipes/components/IngredientLinesEditor'
 import { RecipeOverridesFields } from '@/features/recipes/components/RecipeOverridesFields'
@@ -39,8 +41,23 @@ export default function RecipeEditPage() {
   const { showToast } = useToast()
 
   const { data: existingRecipe, isLoading, isError, refetch } = useRecipe(slug)
-  const { data: categories } = useCategories()
-  const { data: bases } = useBases()
+  const {
+    data: categories,
+    isLoading: isCategoriesLoading,
+    isError: isCategoriesError,
+    refetch: refetchCategories,
+  } = useCategories()
+  const { data: bases, isLoading: isBasesLoading, isError: isBasesError, refetch: refetchBases } = useBases()
+  const {
+    isLoading: isIngredientsLoading,
+    isError: isIngredientsError,
+    refetch: refetchIngredients,
+  } = useIngredients()
+  const {
+    isLoading: isSettingsLoading,
+    isError: isSettingsError,
+    refetch: refetchSettings,
+  } = useSettings()
   const existingSlugs = useExistingSlugs(existingRecipe?.slug)
   const saveRecipe = useSaveRecipe()
   const { archiveWithUndo, isPending: isArchiving } = useArchiveRecipe()
@@ -129,7 +146,13 @@ export default function RecipeEditPage() {
     )
   }
 
-  if (isEditing && isLoading) {
+  if (
+    (isEditing && isLoading) ||
+    isCategoriesLoading ||
+    isBasesLoading ||
+    isIngredientsLoading ||
+    isSettingsLoading
+  ) {
     return (
       <div className="space-y-4">
         <Skeleton className="h-8 w-2/3" />
@@ -141,6 +164,20 @@ export default function RecipeEditPage() {
 
   if (isEditing && (isError || !existingRecipe)) {
     return <ErrorState message="Couldn't load this recipe to edit." onRetry={refetch} />
+  }
+
+  if (isCategoriesError || isBasesError || isIngredientsError || isSettingsError) {
+    return (
+      <ErrorState
+        message="Couldn't load the ingredient library needed to edit a recipe."
+        onRetry={() => {
+          void refetchCategories()
+          void refetchBases()
+          void refetchIngredients()
+          void refetchSettings()
+        }}
+      />
+    )
   }
 
   return (

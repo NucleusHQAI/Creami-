@@ -401,6 +401,13 @@ function IngredientEditForm({
             </p>
           ) : usage.isLoading ? (
             <Skeleton className="h-9 w-48" />
+          ) : usage.isError ? (
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-[13px] text-berry">Couldn&rsquo;t check whether this ingredient is in use.</span>
+              <Button type="button" variant="ghost" size="sm" onClick={() => usage.refetch()}>
+                Try again
+              </Button>
+            </div>
           ) : usage.data && (usage.data.recipes > 0 || usage.data.bases > 0) ? (
             <p className="text-[13px] text-muted">{usageMessage(usage.data)}</p>
           ) : confirmingDelete ? (

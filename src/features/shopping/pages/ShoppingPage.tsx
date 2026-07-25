@@ -53,8 +53,12 @@ export default function ShoppingPage() {
       ) : groups.length === 0 ? (
         <EmptyState
           icon={ShoppingCart}
-          title="Nothing to buy yet"
-          message="Add a recipe to your plan above and the list builds itself."
+          title={hasPlan ? 'Nothing left to buy' : 'Nothing to buy yet'}
+          message={
+            hasPlan
+              ? "Everything for your planned recipes is either ticked off or hidden by \"Skip optional extras\"."
+              : 'Add a recipe to your plan above and the list builds itself.'
+          }
         />
       ) : (
         <div className="space-y-6">
