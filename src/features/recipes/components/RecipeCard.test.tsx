@@ -40,6 +40,9 @@ test('keeps the recipe link and favourite button as accessible siblings', async 
 
   expect(screen.getByRole('link', { name: 'View Berry recipe' })).toBeInTheDocument()
   expect(screen.getByRole('button', { name: 'Add to favourites' })).toBeInTheDocument()
-  expect(screen.getByText('Dessert')).toBeVisible()
+  const categoryLabel = screen.getByText('Dessert')
+  expect(categoryLabel).toBeVisible()
+  expect(categoryLabel).toHaveClass('text-ink')
+  expect(categoryLabel).not.toHaveStyle({ color: recipe.accent })
   await expectNoAxeViolations(container)
 })

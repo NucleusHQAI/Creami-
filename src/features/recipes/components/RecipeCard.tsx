@@ -45,10 +45,7 @@ export function RecipeCard({ recipe, kcal, proteinG, onToggleFavourite }: Recipe
 
       <div className="space-y-3 p-4">
         <div>
-          <p
-            className="font-mono text-[9.5px] font-bold uppercase tracking-[0.1em]"
-            style={{ color: 'var(--accent)' }}
-          >
+          <p className="font-mono text-[9.5px] font-bold uppercase tracking-[0.1em] text-ink">
             {recipe.category_label}
           </p>
           <h3 className="font-display text-[22px] tracking-[-0.025em] text-ink">{recipe.name}</h3>

@@ -18,7 +18,7 @@ colors: {
   ink:    '#232238',   // primary text, dark surfaces, primary buttons
   muted:  '#686579',   // secondary text
   line:   '#e9e2d7',   // borders and dividers
-  berry:  '#d94468',   // the accent — links, active states, key actions
+  berry:  '#cf365f',   // the accent — links, active states, key actions
   berrydk:'#a62249',   // eyebrow text, hover on berry
   blue:   '#385d8a',   // protein figures only
 }
