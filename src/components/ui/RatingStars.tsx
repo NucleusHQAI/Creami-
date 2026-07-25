@@ -25,13 +25,12 @@ export function RatingStars({ value, onChange, size = 18 }: RatingStarsProps) {
   }
 
   return (
-    <div role="radiogroup" aria-label="Rating" className="inline-flex items-center gap-1">
+    <div role="group" aria-label="Rating" className="inline-flex items-center gap-1">
       {stars.map((star) => (
         <button
           key={star}
           type="button"
-          role="radio"
-          aria-checked={star === value}
+          aria-pressed={star === value}
           aria-label={`${star} star${star === 1 ? '' : 's'}`}
           onClick={() => onChange(star)}
           className="flex h-11 w-11 items-center justify-center"

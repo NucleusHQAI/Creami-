@@ -18,9 +18,8 @@ export function RecipeCard({ recipe, kcal, proteinG, onToggleFavourite }: Recipe
   }
 
   return (
-    <Link
-      to={`/recipe/${recipe.slug}`}
-      className="group block overflow-hidden rounded-recipe border border-line bg-paper transition-transform motion-safe:duration-150 motion-safe:hover:-translate-y-[3px] motion-safe:hover:shadow-lift"
+    <article
+      className="group relative block overflow-hidden rounded-recipe border border-line bg-paper transition-transform motion-safe:duration-150 motion-safe:hover:-translate-y-[3px] motion-safe:hover:shadow-lift"
       style={{ '--accent': recipe.accent ?? undefined, '--tint': recipe.tint ?? undefined } as CSSProperties}
     >
       <div className="relative h-24 bg-[var(--tint)]">
@@ -35,7 +34,7 @@ export function RecipeCard({ recipe, kcal, proteinG, onToggleFavourite }: Recipe
         <FavouriteButton
           isFavourite={recipe.is_favourite ?? false}
           onToggle={() => onToggleFavourite(recipe.id as string)}
-          className="absolute left-2 top-2"
+          className="absolute left-2 top-2 z-10"
         />
         {recipe.emoji && (
           <span aria-hidden="true" className="absolute right-3 top-3 text-2xl">
@@ -46,10 +45,7 @@ export function RecipeCard({ recipe, kcal, proteinG, onToggleFavourite }: Recipe
 
       <div className="space-y-3 p-4">
         <div>
-          <p
-            className="font-mono text-[9.5px] font-bold uppercase tracking-[0.1em]"
-            style={{ color: 'var(--accent)' }}
-          >
+          <p className="font-mono text-[9.5px] font-bold uppercase tracking-[0.1em] text-ink">
             {recipe.category_label}
           </p>
           <h3 className="font-display text-[22px] tracking-[-0.025em] text-ink">{recipe.name}</h3>
@@ -67,15 +63,19 @@ export function RecipeCard({ recipe, kcal, proteinG, onToggleFavourite }: Recipe
           )}
         </div>
 
-        <p className="flex items-center justify-between text-[13px] font-medium text-ink">
+        <Link
+          to={`/recipe/${recipe.slug}`}
+          aria-label={`View ${recipe.name ?? 'recipe'} recipe`}
+          className="flex items-center justify-between text-[13px] font-medium text-ink after:absolute after:inset-0 after:content-['']"
+        >
           View recipe
           <ArrowRight
             size={16}
             aria-hidden="true"
             className="transition-transform motion-safe:duration-150 group-hover:translate-x-0.5"
           />
-        </p>
+        </Link>
       </div>
-    </Link>
+    </article>
   )
 }

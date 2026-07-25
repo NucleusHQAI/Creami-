@@ -113,7 +113,7 @@ export function MacroPanel({
         than a measurement.
       </p>
 
-      <p aria-live="polite" className="sr-only">
+      <p role="status" aria-live="polite" aria-atomic="true" className="sr-only">
         {liveSummary}
       </p>
     </section>

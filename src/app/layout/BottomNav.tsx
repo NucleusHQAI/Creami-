@@ -10,7 +10,7 @@ const items = [
 export function BottomNav() {
   return (
     <nav
-      aria-label="Primary"
+      aria-label="Primary mobile"
       className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-paper pb-[env(safe-area-inset-bottom)] md:hidden"
     >
       <ul className="flex">

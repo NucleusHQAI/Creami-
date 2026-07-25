@@ -13,7 +13,7 @@ export interface RecipeFilterChipsProps {
 export function RecipeFilterChips({ categories, value, onChange }: RecipeFilterChipsProps) {
   return (
     <div
-      role="radiogroup"
+      role="group"
       aria-label="Filter recipes"
       className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0"
     >

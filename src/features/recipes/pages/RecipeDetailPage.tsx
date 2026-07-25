@@ -150,10 +150,7 @@ export default function RecipeDetailPage() {
       <header className="space-y-2">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <p
-              className="font-mono text-[11px] font-bold uppercase tracking-[0.1em]"
-              style={{ color: recipe.category.accent }}
-            >
+            <p className="font-mono text-[11px] font-bold uppercase tracking-[0.1em] text-ink">
               {recipe.category.label}
             </p>
             <h1 className="font-display text-[clamp(28px,5vw,40px)] leading-[1.05] tracking-[-0.04em] text-ink">

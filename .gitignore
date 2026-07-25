@@ -22,3 +22,6 @@ coverage
 
 # Claude Code harness state (agent worktrees, local settings) — never repo content
 .claude/
+
+# Codex task worktrees
+.worktrees/

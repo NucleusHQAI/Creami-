@@ -10,7 +10,7 @@ export default {
         ink: '#232238',
         muted: '#686579',
         line: '#e9e2d7',
-        berry: '#d94468',
+        berry: '#cf365f',
         berrydk: '#a62249',
         blue: '#385d8a',
       },

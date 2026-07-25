@@ -1,4 +1,4 @@
-import { useEffect, useRef, type ReactNode } from 'react'
+import { useEffect, useId, useRef, type ReactNode } from 'react'
 import { X } from 'lucide-react'
 import { IconButton } from '@/components/ui/IconButton'
 
@@ -13,8 +13,14 @@ const FOCUSABLE_SELECTOR =
   'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
 
 export function Sheet({ open, onClose, title, children }: SheetProps) {
+  const titleId = useId()
   const panelRef = useRef<HTMLDivElement>(null)
   const previouslyFocused = useRef<HTMLElement | null>(null)
+  const onCloseRef = useRef(onClose)
+
+  useEffect(() => {
+    onCloseRef.current = onClose
+  }, [onClose])
 
   useEffect(() => {
     if (!open) return
@@ -29,7 +35,7 @@ export function Sheet({ open, onClose, title, children }: SheetProps) {
 
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape') {
-        onClose()
+        onCloseRef.current()
         return
       }
       if (event.key !== 'Tab' || !panel) return
@@ -52,9 +58,11 @@ export function Sheet({ open, onClose, title, children }: SheetProps) {
     return () => {
       document.removeEventListener('keydown', handleKeyDown)
       document.body.style.overflow = originalOverflow
-      previouslyFocused.current?.focus()
+      if (previouslyFocused.current?.isConnected) {
+        previouslyFocused.current.focus()
+      }
     }
-  }, [open, onClose])
+  }, [open])
 
   if (!open) return null
 
@@ -69,11 +77,12 @@ export function Sheet({ open, onClose, title, children }: SheetProps) {
         ref={panelRef}
         role="dialog"
         aria-modal="true"
-        aria-labelledby="sheet-title"
+        aria-labelledby={titleId}
+        tabIndex={-1}
         className="relative max-h-[90dvh] w-full overflow-y-auto rounded-t-panel border-t border-line bg-cream p-6 motion-safe:animate-[slideUp_200ms_ease-out] sm:max-w-lg sm:rounded-panel sm:border"
       >
         <div className="mb-4 flex items-center justify-between">
-          <h2 id="sheet-title" className="font-display text-xl tracking-[-0.025em] text-ink">
+          <h2 id={titleId} className="font-display text-xl tracking-[-0.025em] text-ink">
             {title}
           </h2>
           <IconButton aria-label="Close" onClick={onClose}>

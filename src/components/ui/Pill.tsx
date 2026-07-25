@@ -10,7 +10,7 @@ const variantClasses: Record<Variant, string> = {
   default: 'bg-line/50 text-ink',
   protein: 'bg-blue/10 text-blue',
   base: 'bg-berry/10 text-berrydk',
-  accent: 'bg-[var(--tint,theme(colors.line))] text-[var(--accent,theme(colors.ink))]',
+  accent: 'bg-[var(--tint,theme(colors.line))] text-ink',
 }
 
 export function Pill({ variant = 'default', className = '', ...props }: PillProps) {

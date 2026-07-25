@@ -24,7 +24,7 @@ const colors = [
   { name: 'ink', hex: '#232238' },
   { name: 'muted', hex: '#686579' },
   { name: 'line', hex: '#e9e2d7' },
-  { name: 'berry', hex: '#d94468' },
+  { name: 'berry', hex: '#cf365f' },
   { name: 'berrydk', hex: '#a62249' },
   { name: 'blue', hex: '#385d8a' },
 ] as const
@@ -157,7 +157,7 @@ export default function StyleguidePage() {
           <Pill variant="base">Everyday creamy</Pill>
           <Pill
             variant="accent"
-            style={{ '--accent': '#d94468', '--tint': '#ffe7ee' } as React.CSSProperties}
+            style={{ '--accent': '#cf365f', '--tint': '#ffe7ee' } as React.CSSProperties}
           >
             Accent
           </Pill>

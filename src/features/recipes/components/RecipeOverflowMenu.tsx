@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState, type KeyboardEvent } from 'react'
 import { Copy, MoreVertical, Pencil, ShoppingCart, Snowflake, Trash2 } from 'lucide-react'
 import { IconButton } from '@/components/ui/IconButton'
 import { useToast } from '@/app/ToastProvider'
@@ -33,6 +33,9 @@ export function RecipeOverflowMenu({
   const addToShoppingList = onAddToShoppingList ?? (() => showToast('Add to shopping list — coming soon'))
   const logBatch = onLogBatch ?? (() => showToast('Log a batch — coming soon'))
   const containerRef = useRef<HTMLDivElement>(null)
+  const triggerRef = useRef<HTMLButtonElement>(null)
+  const itemRefs = useRef<Array<HTMLButtonElement | null>>([])
+  const menuId = useId()
 
   useEffect(() => {
     if (!open) return
@@ -42,15 +45,13 @@ export function RecipeOverflowMenu({
         setOpen(false)
       }
     }
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === 'Escape') setOpen(false)
-    }
-
     document.addEventListener('mousedown', handlePointerDown)
-    document.addEventListener('keydown', handleKeyDown)
-    return () => {
-      document.removeEventListener('mousedown', handlePointerDown)
-      document.removeEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('mousedown', handlePointerDown)
+  }, [open])
+
+  useEffect(() => {
+    if (open) {
+      itemRefs.current[0]?.focus()
     }
   }, [open])
 
@@ -67,12 +68,39 @@ export function RecipeOverflowMenu({
     { label: 'Delete', icon: Trash2, action: onDelete, danger: true },
   ]
 
+  function handleMenuKeyDown(event: KeyboardEvent<HTMLDivElement>) {
+    const menuItems = itemRefs.current.filter(
+      (item): item is HTMLButtonElement => item !== null,
+    )
+    const currentIndex = menuItems.indexOf(document.activeElement as HTMLButtonElement)
+
+    if (event.key === 'ArrowDown') {
+      event.preventDefault()
+      menuItems[(currentIndex + 1) % menuItems.length]?.focus()
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault()
+      menuItems[(currentIndex - 1 + menuItems.length) % menuItems.length]?.focus()
+    } else if (event.key === 'Home') {
+      event.preventDefault()
+      menuItems[0]?.focus()
+    } else if (event.key === 'End') {
+      event.preventDefault()
+      menuItems[menuItems.length - 1]?.focus()
+    } else if (event.key === 'Escape') {
+      event.preventDefault()
+      setOpen(false)
+      triggerRef.current?.focus()
+    }
+  }
+
   return (
     <div ref={containerRef} className="relative">
       <IconButton
+        ref={triggerRef}
         aria-label="Recipe actions"
         aria-haspopup="menu"
         aria-expanded={open}
+        aria-controls={open ? menuId : undefined}
         onClick={() => setOpen((value) => !value)}
       >
         <MoreVertical size={20} aria-hidden="true" />
@@ -80,13 +108,18 @@ export function RecipeOverflowMenu({
 
       {open && (
         <div
+          id={menuId}
           role="menu"
           aria-label="Recipe actions"
+          onKeyDown={handleMenuKeyDown}
           className="absolute right-0 top-12 z-20 w-56 overflow-hidden rounded-panel border border-line bg-paper py-1 shadow-lift"
         >
-          {items.map((item) => (
+          {items.map((item, index) => (
             <button
               key={item.label}
+              ref={(node) => {
+                itemRefs.current[index] = node
+              }}
               type="button"
               role="menuitem"
               onClick={() => runAndClose(item.action)}
