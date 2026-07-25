@@ -9,14 +9,20 @@ import type {
   MacroResult,
   Unit,
 } from '@/lib/macros/types'
-import type { Ingredient as DomainIngredient, RecipeWithLines } from '@/types/domain'
+import type {
+  AppSettings,
+  BaseWithIngredients,
+  Ingredient as DomainIngredient,
+  RecipeWithLines,
+} from '@/types/domain'
 
 export interface UseRecipeMacrosOptions {
   scale?: number
   excludeOptional?: boolean
 }
 
-function toMacroIngredient(ingredient: DomainIngredient): MacroIngredient {
+/** Exported so useDraftRecipeMacros (the editor's live readout) can share this mapping without duplicating it. */
+export function toMacroIngredient(ingredient: DomainIngredient): MacroIngredient {
   return {
     id: ingredient.id,
     slug: ingredient.slug,
@@ -31,6 +37,57 @@ function toMacroIngredient(ingredient: DomainIngredient): MacroIngredient {
     negligible: ingredient.negligible,
     counts_toward_volume: ingredient.counts_toward_volume,
   }
+}
+
+/**
+ * Binds one recipe to the macro engine. Pure — no memoisation, no React.
+ * Shared by `useRecipeMacros` (one recipe) and `useRecipeListMacros` (every
+ * recipe on the list) so the ingredient/base/settings wiring lives in one
+ * place. All the arithmetic still lives in `src/lib/macros`.
+ */
+export function computeRecipeMacros(
+  recipe: RecipeWithLines,
+  ingredients: DomainIngredient[],
+  bases: BaseWithIngredients[],
+  settings: AppSettings,
+  options: UseRecipeMacrosOptions = {},
+): MacroResult | undefined {
+  const base = bases.find((b) => b.id === recipe.base_id)
+  if (!base) {
+    return undefined
+  }
+
+  const ingredientMap = new Map(ingredients.map((i) => [i.id, toMacroIngredient(i)]))
+
+  const baseLines: MacroLine[] = base.ingredients.map((line) => ({
+    ingredientId: line.ingredient_id,
+    quantity: line.quantity,
+    unit: line.unit as Unit,
+    optional: false,
+    role: 'base',
+  }))
+
+  const recipeLines: MacroLine[] = recipe.ingredients.map((line) => ({
+    ingredientId: line.ingredient_id,
+    quantity: line.quantity,
+    unit: line.unit as Unit | null,
+    optional: line.optional,
+    role: line.role as 'addition' | 'mixin',
+  }))
+
+  return calculateMacros({
+    baseLines,
+    fillIngredientId: base.fill_ingredient_id,
+    recipeLines,
+    ingredients: ingredientMap,
+    settings: {
+      maxFillMl: settings.max_fill_ml,
+      servingsPerTub: settings.servings_per_tub,
+      defaultMilkIngredientId: settings.default_milk_ingredient_id,
+    },
+    scale: options.scale,
+    excludeOptional: options.excludeOptional,
+  })
 }
 
 /**
@@ -51,42 +108,6 @@ export function useRecipeMacros(
     if (!recipe || !ingredients || !bases || !settings) {
       return undefined
     }
-
-    const base = bases.find((b) => b.id === recipe.base_id)
-    if (!base) {
-      return undefined
-    }
-
-    const ingredientMap = new Map(ingredients.map((i) => [i.id, toMacroIngredient(i)]))
-
-    const baseLines: MacroLine[] = base.ingredients.map((line) => ({
-      ingredientId: line.ingredient_id,
-      quantity: line.quantity,
-      unit: line.unit as Unit,
-      optional: false,
-      role: 'base',
-    }))
-
-    const recipeLines: MacroLine[] = recipe.ingredients.map((line) => ({
-      ingredientId: line.ingredient_id,
-      quantity: line.quantity,
-      unit: line.unit as Unit | null,
-      optional: line.optional,
-      role: line.role as 'addition' | 'mixin',
-    }))
-
-    return calculateMacros({
-      baseLines,
-      fillIngredientId: base.fill_ingredient_id,
-      recipeLines,
-      ingredients: ingredientMap,
-      settings: {
-        maxFillMl: settings.max_fill_ml,
-        servingsPerTub: settings.servings_per_tub,
-        defaultMilkIngredientId: settings.default_milk_ingredient_id,
-      },
-      scale,
-      excludeOptional,
-    })
+    return computeRecipeMacros(recipe, ingredients, bases, settings, { scale, excludeOptional })
   }, [recipe, ingredients, bases, settings, scale, excludeOptional])
 }
