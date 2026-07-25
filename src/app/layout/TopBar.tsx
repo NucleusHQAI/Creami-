@@ -21,7 +21,7 @@ export function TopBar() {
                     }`
                   }
                 >
-                  <span aria-hidden="true">{item.emoji}</span>
+                  <item.icon size={16} strokeWidth={1.7} aria-hidden="true" />
                   {item.label}
                 </NavLink>
               </li>

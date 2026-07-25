@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams, useBlocker } from 'react-router-dom'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
@@ -21,6 +21,7 @@ import { IngredientLinesEditor } from '@/features/recipes/components/IngredientL
 import { RecipeOverridesFields } from '@/features/recipes/components/RecipeOverridesFields'
 import { EditorMacroReadout } from '@/features/recipes/components/EditorMacroReadout'
 import { DeleteRecipeSheet } from '@/features/recipes/components/DeleteRecipeSheet'
+import { RecipePhotoField } from '@/features/recipes/components/RecipePhotoField'
 import {
   defaultFormValues,
   formValuesToInput,
@@ -32,10 +33,12 @@ import { ensureUniqueSlug, slugify } from '@/lib/slug'
 import { useOnlineStatus } from '@/lib/online-status'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { WifiOff } from 'lucide-react'
+import { getRecipeImageUrl, validateRecipeImage } from '@/lib/api/recipe-images'
 
 const textareaClass =
   'h-24 w-full rounded-soft border border-line bg-cream px-3 py-2 text-[14px] text-ink focus-visible:outline-none'
-const inputClass = 'h-11 w-full rounded-soft border border-line bg-cream px-3 text-ink focus-visible:outline-none'
+const inputClass =
+  'h-11 w-full rounded-soft border border-line bg-cream px-3 text-ink focus-visible:outline-none'
 
 export default function RecipeEditPage() {
   const { slug } = useParams<{ slug: string }>()
@@ -51,7 +54,12 @@ export default function RecipeEditPage() {
     isError: isCategoriesError,
     refetch: refetchCategories,
   } = useCategories()
-  const { data: bases, isLoading: isBasesLoading, isError: isBasesError, refetch: refetchBases } = useBases()
+  const {
+    data: bases,
+    isLoading: isBasesLoading,
+    isError: isBasesError,
+    refetch: refetchBases,
+  } = useBases()
   const {
     isLoading: isIngredientsLoading,
     isError: isIngredientsError,
@@ -68,6 +76,10 @@ export default function RecipeEditPage() {
 
   const [slugTouched, setSlugTouched] = useState(false)
   const [deleteOpen, setDeleteOpen] = useState(false)
+  const [photoFile, setPhotoFile] = useState<File | null>(null)
+  const [photoRemoved, setPhotoRemoved] = useState(false)
+  const [photoError, setPhotoError] = useState<string | null>(null)
+  const allowNavigationRef = useRef(false)
 
   const {
     register,
@@ -88,12 +100,21 @@ export default function RecipeEditPage() {
     if (existingRecipe) {
       reset(recipeToFormValues(existingRecipe))
       setSlugTouched(true)
+      setPhotoFile(null)
+      setPhotoRemoved(false)
+      setPhotoError(null)
     }
   }, [existingRecipe, reset])
 
+  const photoDirty = photoFile !== null || photoRemoved
+  const hasUnsavedChanges = isDirty || photoDirty
+
   // Warn before navigating away from a dirty form, per docs/05 § Saving.
   const blocker = useBlocker(
-    ({ currentLocation, nextLocation }) => isDirty && currentLocation.pathname !== nextLocation.pathname,
+    ({ currentLocation, nextLocation }) =>
+      !allowNavigationRef.current &&
+      hasUnsavedChanges &&
+      currentLocation.pathname !== nextLocation.pathname,
   )
   useEffect(() => {
     if (blocker.state !== 'blocked') return
@@ -105,12 +126,12 @@ export default function RecipeEditPage() {
   }, [blocker])
   useEffect(() => {
     function handleBeforeUnload(event: BeforeUnloadEvent) {
-      if (!isDirty) return
+      if (!hasUnsavedChanges) return
       event.preventDefault()
     }
     window.addEventListener('beforeunload', handleBeforeUnload)
     return () => window.removeEventListener('beforeunload', handleBeforeUnload)
-  }, [isDirty])
+  }, [hasUnsavedChanges])
 
   const name = watch('name')
   const baseId = watch('baseId')
@@ -132,16 +153,26 @@ export default function RecipeEditPage() {
       return
     }
 
+    const currentImagePath = existingRecipe?.image_path ?? null
     saveRecipe.mutate(
-      formValuesToInput(values, {
-        id: existingRecipe?.id,
-        isFavourite: existingRecipe?.is_favourite ?? false,
-      }),
+      {
+        input: formValuesToInput(values, {
+          id: existingRecipe?.id,
+          isFavourite: existingRecipe?.is_favourite ?? false,
+          imagePath: photoRemoved ? null : currentImagePath,
+        }),
+        imageFile: photoFile,
+        previousImagePath: currentImagePath,
+      },
       {
         onSuccess: (recipe) => {
           // Clears isDirty before navigating, so the unsaved-changes blocker
           // doesn't immediately fire on a save that just succeeded.
           reset(values, { keepValues: true })
+          setPhotoFile(null)
+          setPhotoRemoved(false)
+          setPhotoError(null)
+          allowNavigationRef.current = true
           showToast(isEditing ? 'Recipe saved' : 'Recipe created')
           navigate(`/recipe/${recipe.slug}`)
         },
@@ -240,16 +271,42 @@ export default function RecipeEditPage() {
         <BaseSelectField
           bases={bases ?? []}
           value={baseId}
-          onChange={(nextBaseId) => setValue('baseId', nextBaseId, { shouldDirty: true, shouldValidate: true })}
+          onChange={(nextBaseId) =>
+            setValue('baseId', nextBaseId, { shouldDirty: true, shouldValidate: true })
+          }
           showChangeWarning={Boolean(existingRecipe) && baseId !== existingRecipe?.base_id}
           error={errors.baseId?.message}
         />
 
         <Field label="Profile" hint="One line describing the flavour." error={errors.profile}>
           {(fieldProps) => (
-            <textarea {...fieldProps} {...register('profile')} maxLength={200} className={textareaClass} />
+            <textarea
+              {...fieldProps}
+              {...register('profile')}
+              maxLength={200}
+              className={textareaClass}
+            />
           )}
         </Field>
+
+        <RecipePhotoField
+          currentImageUrl={photoRemoved ? null : getRecipeImageUrl(existingRecipe?.image_path)}
+          selectedFile={photoFile}
+          error={photoError}
+          disabled={isSubmitting || saveRecipe.isPending}
+          onSelect={(file) => {
+            const validationError = validateRecipeImage(file)
+            setPhotoError(validationError)
+            if (validationError) return
+            setPhotoFile(file)
+            setPhotoRemoved(false)
+          }}
+          onRemove={() => {
+            setPhotoFile(null)
+            setPhotoRemoved(true)
+            setPhotoError(null)
+          }}
+        />
 
         <IngredientLinesEditor
           control={control}
@@ -267,12 +324,19 @@ export default function RecipeEditPage() {
           addLabel="Add mix-in"
         />
 
-        <Field label="Mix-in note" hint="A human-readable summary, e.g. “Optional: 5g wafer pieces.”">
-          {(fieldProps) => <textarea {...fieldProps} {...register('mixinNote')} className={textareaClass} />}
+        <Field
+          label="Mix-in note"
+          hint="A human-readable summary, e.g. “Optional: 5g wafer pieces.”"
+        >
+          {(fieldProps) => (
+            <textarea {...fieldProps} {...register('mixinNote')} className={textareaClass} />
+          )}
         </Field>
 
         <Field label="Best result tip">
-          {(fieldProps) => <textarea {...fieldProps} {...register('tip')} className={textareaClass} />}
+          {(fieldProps) => (
+            <textarea {...fieldProps} {...register('tip')} className={textareaClass} />
+          )}
         </Field>
 
         <RecipeOverridesFields register={register} errors={errors} />

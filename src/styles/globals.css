@@ -42,4 +42,12 @@
     background-size: 20px 20px;
     background-repeat: repeat-x;
   }
+
+  .hide-scrollbar {
+    scrollbar-width: none;
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
 }

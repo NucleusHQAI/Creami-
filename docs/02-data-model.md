@@ -103,6 +103,7 @@ The fill ingredient's row here is the **nominal** amount. The engine overrides i
 | `category_id` | uuid → categories, restrict | |
 | `base_id` | uuid → bases, restrict | |
 | `profile` | text | the one-line flavour description |
+| `image_path` | text nullable | bundled local path or a path in the `recipe-images` Storage bucket |
 | `tip` | text | "Best result" note |
 | `mixin_note` | text | human-readable mix-in summary |
 | `method_override` | text nullable | null means use the standard method from settings |
@@ -227,7 +228,7 @@ create view recipe_ratings as
 
 -- Everything the recipe list needs, in one round trip.
 create view recipe_list_view as
-  select r.id, r.slug, r.name, r.profile, r.is_favourite, r.archived_at,
+  select r.id, r.slug, r.name, r.profile, r.image_path, r.is_favourite, r.archived_at,
          c.key as category_key, c.label as category_label,
          c.emoji, c.accent, c.tint,
          b.key as base_key, b.name as base_name,
@@ -336,6 +337,7 @@ create table recipes (
   tip                      text,
   mixin_note               text,
   method_override          text,
+  image_path               text,
   is_favourite             boolean not null default false,
   macro_override_kcal      numeric check (macro_override_kcal is null or macro_override_kcal >= 0),
   macro_override_protein_g numeric check (macro_override_protein_g is null or macro_override_protein_g >= 0),
@@ -475,7 +477,7 @@ create view recipe_ratings as
   group by recipe_id;
 
 create view recipe_list_view as
-  select r.id, r.slug, r.name, r.profile, r.is_favourite, r.archived_at,
+  select r.id, r.slug, r.name, r.profile, r.image_path, r.is_favourite, r.archived_at,
          r.created_at, r.updated_at,
          c.key as category_key, c.label as category_label,
          c.emoji, c.accent, c.tint,

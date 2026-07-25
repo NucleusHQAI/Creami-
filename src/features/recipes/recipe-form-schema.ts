@@ -39,7 +39,14 @@ export type RecipeFormValues = z.infer<typeof recipeFormSchema>
 export type IngredientLineFormValue = z.infer<typeof ingredientLineSchema>
 
 export function emptyIngredientLine(): IngredientLineFormValue {
-  return { ingredientId: null, freeText: null, quantity: null, unit: 'g', display: '', optional: false }
+  return {
+    ingredientId: null,
+    freeText: null,
+    quantity: null,
+    unit: 'g',
+    display: '',
+    optional: false,
+  }
 }
 
 export function defaultFormValues(): RecipeFormValues {
@@ -61,9 +68,7 @@ export function defaultFormValues(): RecipeFormValues {
 
 /** Loads an existing recipe into the form's shape. */
 export function recipeToFormValues(recipe: RecipeWithLines): RecipeFormValues {
-  const toLine = (
-    line: RecipeWithLines['ingredients'][number],
-  ): IngredientLineFormValue => ({
+  const toLine = (line: RecipeWithLines['ingredients'][number]): IngredientLineFormValue => ({
     ingredientId: line.ingredient_id,
     freeText: line.free_text,
     quantity: line.quantity,
@@ -93,6 +98,7 @@ export function recipeToFormValues(recipe: RecipeWithLines): RecipeFormValues {
 export interface FormValuesToInputOptions {
   id?: string
   isFavourite: boolean
+  imagePath: string | null
 }
 
 /** Builds the payload for upsertRecipe from the form's current values. */
@@ -126,6 +132,7 @@ export function formValuesToInput(
     tip: values.tip?.trim() || null,
     mixinNote: values.mixinNote?.trim() || null,
     methodOverride: values.methodOverride?.trim() || null,
+    imagePath: options.imagePath,
     macroOverrideKcal: values.macroOverrideKcal,
     macroOverrideProteinG: values.macroOverrideProteinG,
     isFavourite: options.isFavourite,

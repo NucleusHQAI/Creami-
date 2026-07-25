@@ -121,6 +121,11 @@ export function buildShoppingList(input: BuildShoppingListInput): ShoppingGroup[
     const { recipe } = item
     const scale = item.multiplier
     const ref: ShoppingRecipeRef = { recipeId: item.recipe_id, name: recipe.name, multiplier: scale }
+    const milkIngredientId = settings.defaultMilkIngredientId ?? recipe.fillIngredientId
+    const resolvedSettings: MacroSettings = {
+      ...settings,
+      defaultMilkIngredientId: milkIngredientId,
+    }
 
     const baseLines: MacroLine[] = recipe.baseLines.map((line) => ({
       ingredientId: line.ingredientId,
@@ -146,7 +151,7 @@ export function buildShoppingList(input: BuildShoppingListInput): ShoppingGroup[
       fillIngredientId: recipe.fillIngredientId,
       recipeLines,
       ingredients: macroIngredients,
-      settings,
+      settings: resolvedSettings,
       scale,
       excludeOptional,
     })
@@ -164,7 +169,7 @@ export function buildShoppingList(input: BuildShoppingListInput): ShoppingGroup[
       if (line.ingredientId === null || line.quantity === null || line.unit === null) continue
       const resolvedIngredientId =
         line.ingredientId === recipe.fillIngredientId
-          ? settings.defaultMilkIngredientId
+          ? milkIngredientId
           : line.ingredientId
       if (!resolvedIngredientId) continue
       const ingredient = ingredients.get(resolvedIngredientId)
@@ -184,8 +189,8 @@ export function buildShoppingList(input: BuildShoppingListInput): ShoppingGroup[
     }
 
     // The derived fill, attributed to the default milk ingredient.
-    if (settings.defaultMilkIngredientId && macroResult.fillVolumeMl > 0) {
-      const milk = ingredients.get(settings.defaultMilkIngredientId)
+    if (macroResult.fillVolumeMl > 0) {
+      const milk = ingredients.get(milkIngredientId)
       if (milk) {
         addContribution(accumulators, milk, macroResult.fillVolumeMl, ref)
       }

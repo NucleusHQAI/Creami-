@@ -8,8 +8,14 @@ export function useDeleteTastingNote() {
   return useMutation({
     mutationFn: ({ id }: { id: string; recipeId: string }) => deleteTastingNote(id),
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.tastingNotes.forRecipe(variables.recipeId) })
-      queryClient.invalidateQueries({ queryKey: queryKeys.recipeRatings.forRecipe(variables.recipeId) })
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.tastingNotes.forRecipe(variables.recipeId),
+      })
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.recipeRatings.forRecipe(variables.recipeId),
+      })
+      queryClient.invalidateQueries({ queryKey: queryKeys.recipes.all })
+      queryClient.invalidateQueries({ queryKey: queryKeys.batches.history })
     },
   })
 }

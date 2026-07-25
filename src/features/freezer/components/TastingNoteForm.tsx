@@ -14,6 +14,7 @@ export interface TastingNoteFormProps {
   cancelLabel?: string
   submitLabel?: string
   isSubmitting?: boolean
+  initialValue?: TastingNoteFormValue
 }
 
 /** The rating-plus-text form shared by every place a tasting note can be created. */
@@ -23,9 +24,10 @@ export function TastingNoteForm({
   cancelLabel = 'Skip',
   submitLabel = 'Save note',
   isSubmitting = false,
+  initialValue,
 }: TastingNoteFormProps) {
-  const [rating, setRating] = useState(0)
-  const [notes, setNotes] = useState('')
+  const [rating, setRating] = useState(initialValue?.rating ?? 0)
+  const [notes, setNotes] = useState(initialValue?.notes ?? '')
 
   function handleSubmit() {
     onSubmit({

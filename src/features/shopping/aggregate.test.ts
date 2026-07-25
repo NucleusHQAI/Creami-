@@ -177,6 +177,19 @@ describe('buildShoppingList — derived fill, not the nominal amount', () => {
     expect(Math.abs((milk?.quantity ?? 0) - 262.4)).toBeLessThanOrEqual(0.2)
     expect(milk?.quantity).not.toBeCloseTo(325, 0)
   })
+
+  it("uses the base's fill ingredient when no default milk has been configured", () => {
+    const groups = buildShoppingList({
+      plan: [buildPlanItem('vanilla-custard', 1)],
+      ingredients: ingredientMap,
+      settings: { ...skimmedSettings, defaultMilkIngredientId: null },
+      includeOptional: true,
+    })
+
+    const milk = findIngredientLine(groups, 'semi-skimmed-milk')
+    expect(milk).toBeDefined()
+    expect(milk?.quantity).toBeGreaterThan(0)
+  })
 })
 
 describe('buildShoppingList — summing across recipes', () => {

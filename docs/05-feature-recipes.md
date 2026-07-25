@@ -114,6 +114,7 @@ Used for both new and existing recipes. React Hook Form plus a Zod schema; the s
 | Category | select | required |
 | Base | select | required. Changing it shows the base's ingredients and warns that macros will move |
 | Profile | textarea | optional, max 200 |
+| Recipe photo | file picker | optional JPG, PNG or WebP, maximum 5 MB. Shows a preview and supports replace/remove |
 | Additions | line editor | see below |
 | Mix-ins | line editor | same |
 | Mix-in note | textarea | optional |
@@ -138,7 +139,7 @@ Each line is a row: **ingredient picker → quantity → unit → optional toggl
 
 ### Saving
 
-One transaction in effect: upsert the recipe, delete its existing `recipe_ingredients`, insert the new set. Supabase has no client-side transactions, so do it in that order — a failure part-way leaves a recipe with no ingredients, which is recoverable, whereas the reverse leaves orphans.
+Upload a newly selected photo to the public `recipe-images` bucket under a unique path, then upsert the recipe, delete its existing `recipe_ingredients`, and insert the new set. If the recipe save fails, remove the new upload. After a successful replacement or removal, delete the previous uploaded object. Bundled seed artwork remains local.
 
 On success, go to the detail page and invalidate `recipes.all` and `recipes.detail(id)`.
 
@@ -152,7 +153,7 @@ Undo via a toast for 10 seconds after deleting. Cheap to build, and it prevents 
 
 ### Duplicating
 
-Copies everything, appends " (copy)" to the name, derives a fresh slug, opens the editor. This is how a variation gets made, and it will be used more than "new recipe" is.
+Copies everything, appends " (copy)" to the name, derives a fresh slug, opens the editor. Bundled seed artwork may be shared safely; an uploaded photo is not copied, so the variation can choose its own. This is how a variation gets made, and it will be used more than "new recipe" is.
 
 ---
 

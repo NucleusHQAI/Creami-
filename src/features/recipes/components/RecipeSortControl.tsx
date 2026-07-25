@@ -19,14 +19,14 @@ export function RecipeSortControl({ value, onChange }: RecipeSortControlProps) {
 
   return (
     <div className="flex items-center gap-2">
-      <label htmlFor={id} className="text-[13px] text-muted">
+      <label htmlFor={id} className="sr-only text-[13px] text-muted md:not-sr-only">
         Sort
       </label>
       <select
         id={id}
         value={value}
         onChange={(event) => onChange(event.target.value as RecipeSort)}
-        className="h-9 rounded-pill border border-line bg-paper px-3 text-[13px] text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-berry focus-visible:ring-offset-2"
+        className="h-8 rounded-pill border-0 bg-transparent px-2 text-[12px] text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-berry focus-visible:ring-offset-2 md:border md:border-line md:bg-paper md:px-3 md:text-[13px] md:text-ink"
       >
         {SORT_OPTIONS.map((option) => (
           <option key={option.value} value={option.value}>

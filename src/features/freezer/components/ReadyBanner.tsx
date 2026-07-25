@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { ArrowRight, Snowflake } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { useActiveBatches } from '@/features/freezer/hooks/useActiveBatches'
 import { deriveBatchStatus } from '@/lib/freezer-status'
 
@@ -18,21 +18,29 @@ export function ReadyBanner() {
 
   if (ready.length === 0) return null
 
-  const names = ready.map((batch) => batch.recipe?.name).filter((name): name is string => Boolean(name))
+  const names = ready
+    .map((batch) => batch.recipe?.name)
+    .filter((name): name is string => Boolean(name))
 
   return (
     <Link
       to="/freezer"
-      className="flex items-center justify-between gap-3 rounded-panel border border-berry/30 bg-berry/10 px-4 py-3 text-berrydk transition-colors motion-safe:duration-150 hover:bg-berry/15"
+      className="group mt-4 flex min-h-11 items-center justify-between gap-3 text-berrydk"
     >
-      <span className="inline-flex items-center gap-2 text-[14px]">
-        <Snowflake size={16} aria-hidden="true" />
+      <span className="inline-flex items-center gap-2.5 text-[15px]">
+        <span aria-hidden="true" className="h-2 w-2 rounded-pill bg-berry" />
         <span className="font-medium">
           {ready.length} {ready.length === 1 ? 'tub' : 'tubs'} ready to spin
         </span>
-        {names.length > 0 && <span className="text-berrydk/80">— {names.join(', ')}</span>}
+        {names.length > 0 && (
+          <span className="hidden text-berrydk/75 sm:inline">— {names.join(', ')}</span>
+        )}
       </span>
-      <ArrowRight size={16} aria-hidden="true" />
+      <ArrowRight
+        size={16}
+        aria-hidden="true"
+        className="transition-transform motion-safe:duration-150 group-hover:translate-x-0.5"
+      />
     </Link>
   )
 }

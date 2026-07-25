@@ -16,7 +16,10 @@ const RECIPE_WITH_LINES_SELECT = `
 
 /** List rows for the recipe list screen — name, category, base, favourite and rating, but never macros (those depend on live settings and are computed client-side). */
 export async function fetchRecipeList(): Promise<RecipeListRow[]> {
-  const { data, error } = await supabase.from('recipe_list_view').select('*').is('archived_at', null)
+  const { data, error } = await supabase
+    .from('recipe_list_view')
+    .select('*')
+    .is('archived_at', null)
   if (error) throw error
   return data
 }
@@ -99,6 +102,7 @@ export interface RecipeInput {
   tip: string | null
   mixinNote: string | null
   methodOverride: string | null
+  imagePath: string | null
   macroOverrideKcal: number | null
   macroOverrideProteinG: number | null
   isFavourite: boolean
@@ -121,6 +125,7 @@ export async function upsertRecipe(input: RecipeInput): Promise<Recipe> {
     tip: input.tip,
     mixin_note: input.mixinNote,
     method_override: input.methodOverride,
+    image_path: input.imagePath,
     macro_override_kcal: input.macroOverrideKcal,
     macro_override_protein_g: input.macroOverrideProteinG,
     is_favourite: input.isFavourite,
@@ -177,4 +182,3 @@ export async function toggleFavourite(id: string, next: boolean): Promise<void> 
   const { error } = await supabase.from('recipes').update({ is_favourite: next }).eq('id', id)
   if (error) throw error
 }
-

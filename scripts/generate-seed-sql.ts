@@ -143,7 +143,19 @@ function main(): void {
   }
   lines.push('')
 
-  // ---------- 3. bases (resolving fill_ingredient and is_variation_of by lookup) ----------
+  // ---------- 3. settings ----------
+  // A fresh settings row starts with no milk because ingredients do not exist
+  // when migrations run. Seed the standard milk once, without overwriting a
+  // choice already made in the app.
+  lines.push('-- ---------- settings ----------')
+  lines.push(
+    `update app_settings set default_milk_ingredient_id = ` +
+      `(select id from ingredients where slug = 'semi-skimmed-milk') ` +
+      `where id = 1 and default_milk_ingredient_id is null;`,
+  )
+  lines.push('')
+
+  // ---------- 4. bases (resolving fill_ingredient and is_variation_of by lookup) ----------
   lines.push('-- ---------- bases ----------')
   for (const b of bases) {
     const isVariationOf = b.is_variation_of
@@ -160,7 +172,7 @@ function main(): void {
   }
   lines.push('')
 
-  // ---------- 4. base_ingredients (delete then re-insert per base) ----------
+  // ---------- 5. base_ingredients (delete then re-insert per base) ----------
   lines.push('-- ---------- base_ingredients ----------')
   for (const b of bases) {
     lines.push(
@@ -177,29 +189,30 @@ function main(): void {
   }
   lines.push('')
 
-  // ---------- 5. recipes (do nothing on conflict — never overwrite an edit) ----------
+  // ---------- 6. recipes (do nothing on conflict — never overwrite an edit) ----------
   lines.push('-- ---------- recipes ----------')
   for (const r of recipes) {
     lines.push(
-      `insert into recipes (slug, name, category_id, base_id, profile, tip, mixin_note, reference_kcal, reference_protein_g, is_seed) values ` +
+      `insert into recipes (slug, name, category_id, base_id, profile, tip, mixin_note, reference_kcal, reference_protein_g, image_path, is_seed) values ` +
         `(${sqlString(r.slug)}, ${sqlString(r.name)}, ` +
         `(select id from categories where key = ${sqlString(r.category)}), ` +
         `(select id from bases where key = ${sqlString(r.base)}), ` +
         `${sqlString(r.profile)}, ${sqlString(r.tip)}, ${sqlString(r.mixin_note)}, ` +
-        `${sqlNumber(r.reference_kcal)}, ${sqlNumber(r.reference_protein_g)}, true) ` +
+        `${sqlNumber(r.reference_kcal)}, ${sqlNumber(r.reference_protein_g)}, ` +
+        `${sqlString(`/recipe-images/${r.slug}.webp`)}, true) ` +
         `on conflict (slug) do nothing;`,
     )
   }
   lines.push('')
 
-  // ---------- 6. recipe_ingredients (only for recipes just inserted, i.e. not already present) ----------
+  // ---------- 7. recipe_ingredients (only for recipes just inserted, i.e. not already present) ----------
   lines.push('-- ---------- recipe_ingredients ----------')
   lines.push(
     '-- Only touches recipes that are still marked is_seed and have no lines yet, so an edited seed recipe is left alone.',
   )
   lines.push(
     "-- Every recipe's lines are one INSERT...SELECT with a VALUES block, not one statement per line: the not-exists " +
-      'guard must be evaluated once per recipe, before any of that recipe\'s own lines exist — split across several ' +
+      "guard must be evaluated once per recipe, before any of that recipe's own lines exist — split across several " +
       "statements, each later line's guard would see the earlier line just inserted and skip itself.",
   )
   for (const r of recipes) {

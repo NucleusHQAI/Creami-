@@ -46,6 +46,7 @@ export function useDuplicateRecipe() {
         tip: recipe.tip,
         mixinNote: recipe.mixin_note,
         methodOverride: recipe.method_override,
+        imagePath: recipe.image_path?.startsWith('/') ? recipe.image_path : null,
         macroOverrideKcal: recipe.macro_override_kcal,
         macroOverrideProteinG: recipe.macro_override_protein_g,
         isFavourite: false,

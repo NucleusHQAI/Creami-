@@ -17,6 +17,7 @@ const recipe: RecipeListRow = {
   created_at: '2026-07-25T00:00:00Z',
   emoji: '🍓',
   id: 'recipe-1',
+  image_path: null,
   is_favourite: false,
   name: 'Berry',
   profile: 'Bright and creamy.',
@@ -29,12 +30,7 @@ const recipe: RecipeListRow = {
 test('keeps the recipe link and favourite button as accessible siblings', async () => {
   const { container } = render(
     <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-      <RecipeCard
-        recipe={recipe}
-        kcal={320}
-        proteinG={28}
-        onToggleFavourite={vi.fn()}
-      />
+      <RecipeCard recipe={recipe} kcal={320} proteinG={28} onToggleFavourite={vi.fn()} />
     </MemoryRouter>,
   )
 

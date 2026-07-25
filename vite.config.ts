@@ -4,8 +4,7 @@ import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 import path from 'node:path'
 
-const disablePwaForUnsafeWindowsPath =
-  process.platform === 'win32' && __dirname.includes("'")
+const disablePwaForUnsafeWindowsPath = process.platform === 'win32' && __dirname.includes("'")
 
 export default defineConfig({
   plugins: [
@@ -16,7 +15,7 @@ export default defineConfig({
       disable: disablePwaForUnsafeWindowsPath,
       strategies: 'generateSW',
       registerType: 'prompt',
-      includeAssets: ['favicon.svg', 'apple-touch-icon.png'],
+      includeAssets: ['favicon.svg', 'apple-touch-icon.png', 'recipe-images/*.webp'],
       manifest: {
         name: 'CREAMi Deluxe Recipe Book',
         short_name: 'CREAMi',
@@ -46,6 +45,21 @@ export default defineConfig({
               cacheName: 'google-fonts',
               expiration: {
                 maxAgeSeconds: 60 * 60 * 24 * 365,
+              },
+              cacheableResponse: {
+                statuses: [0, 200],
+              },
+            },
+          },
+          {
+            urlPattern:
+              /^https:\/\/[^/]+\.supabase\.co\/storage\/v1\/object\/public\/recipe-images\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'recipe-images',
+              expiration: {
+                maxEntries: 100,
+                maxAgeSeconds: 60 * 60 * 24 * 30,
               },
               cacheableResponse: {
                 statuses: [0, 200],

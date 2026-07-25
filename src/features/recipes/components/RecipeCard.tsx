@@ -3,98 +3,131 @@ import { Link } from 'react-router-dom'
 import { ArrowRight } from 'lucide-react'
 import { FavouriteButton } from '@/components/ui/FavouriteButton'
 import type { RecipeListRow } from '@/types/domain'
+import { getRecipeImageUrl } from '@/lib/api/recipe-images'
 
 export interface RecipeCardProps {
   recipe: RecipeListRow
   kcal: number | null
   proteinG: number | null
+  variant?: 'featured' | 'row'
   onToggleFavourite: (id: string) => void
 }
 
-export function RecipeCard({ recipe, kcal, proteinG, onToggleFavourite }: RecipeCardProps) {
+function formatStats(recipe: RecipeListRow, kcal: number | null, proteinG: number | null): string {
+  const stats: string[] = []
+  if (kcal !== null) stats.push(`${Math.round(kcal)} kcal`)
+  if (proteinG !== null) stats.push(`${Math.round(proteinG)}g protein`)
+  if (recipe.average_rating !== null && recipe.average_rating !== undefined) {
+    stats.push(`★ ${recipe.average_rating}`)
+  }
+  return stats.join(' · ')
+}
+
+export function RecipeCard({
+  recipe,
+  kcal,
+  proteinG,
+  variant = 'row',
+  onToggleFavourite,
+}: RecipeCardProps) {
   if (!recipe.id || !recipe.slug) {
     return null
   }
 
-  const stats: Array<{ text: string; emphasis: boolean }> = []
-  if (recipe.base_name) {
-    stats.push({ text: recipe.base_name, emphasis: false })
-  }
-  if (kcal !== null) {
-    stats.push({ text: `${Math.round(kcal)} kcal`, emphasis: true })
-  }
-  if (proteinG !== null) {
-    stats.push({ text: `${Math.round(proteinG)}g protein`, emphasis: true })
-  }
-  if (recipe.average_rating !== null && recipe.average_rating !== undefined) {
-    stats.push({ text: `★ ${recipe.average_rating}`, emphasis: true })
-  }
+  const artwork = getRecipeImageUrl(recipe.image_path)
+  const stats = formatStats(recipe, kcal, proteinG)
+  const style = {
+    '--accent': recipe.accent ?? undefined,
+    '--tint': recipe.tint ?? undefined,
+  } as CSSProperties
 
-  return (
-    <article
-      className="group isolate relative block overflow-hidden rounded-recipe border-2 border-ink bg-paper shadow-sticker transition-transform motion-safe:duration-150 motion-safe:hover:-translate-y-[3px] motion-safe:hover:shadow-lift"
-      style={{ '--accent': recipe.accent ?? undefined, '--tint': recipe.tint ?? undefined } as CSSProperties}
-    >
-      <div className="relative flex h-24 items-center justify-center bg-[var(--tint)]">
-        <div
-          aria-hidden="true"
-          className="absolute left-1/2 top-[58%] h-28 w-32 -translate-x-1/2 -translate-y-1/2 -rotate-6 rounded-[46%_54%_58%_42%/54%_46%_54%_46%] bg-[var(--accent)]/25"
-        />
-        <div
-          aria-hidden="true"
-          className="absolute left-[42%] top-[68%] h-20 w-24 -translate-x-1/2 -translate-y-1/2 rotate-6 rounded-[50%_50%_42%_58%/58%_42%_58%_42%] bg-[var(--accent)]/15"
-        />
-        <div
-          aria-hidden="true"
-          className="relative z-[1] flex h-12 w-12 items-center justify-center rounded-pill border-2 border-ink bg-paper text-xl shadow-sticker-sm"
-        >
-          {recipe.emoji}
+  if (variant === 'featured') {
+    return (
+      <article
+        className="group relative isolate min-h-[340px] overflow-hidden rounded-[28px] bg-[var(--tint)]"
+        style={style}
+      >
+        {artwork && (
+          <img
+            src={artwork}
+            alt=""
+            className="absolute -right-12 top-8 h-[72%] w-[66%] rounded-pill object-cover"
+          />
+        )}
+
+        <div className="relative z-[1] flex min-h-[340px] max-w-[60%] flex-col p-6">
+          <p className="font-mono text-[10px] font-medium uppercase tracking-[0.16em] text-[var(--accent)]">
+            Featured
+          </p>
+          <h2 className="mt-4 font-display text-[clamp(44px,15vw,64px)] font-normal leading-[0.9] tracking-[-0.055em] text-ink">
+            {recipe.name}
+          </h2>
+          {recipe.profile && (
+            <p className="mt-4 line-clamp-2 text-[15px] leading-6 text-muted">{recipe.profile}</p>
+          )}
+
+          <Link
+            to={`/recipe/${recipe.slug}`}
+            aria-label={`View ${recipe.name ?? 'recipe'} recipe`}
+            className="mt-5 inline-flex h-12 w-fit items-center gap-3 rounded-pill bg-berry px-5 text-[15px] font-medium text-cream transition-colors motion-safe:duration-150 hover:bg-berrydk"
+          >
+            View recipe
+            <ArrowRight
+              size={18}
+              aria-hidden="true"
+              className="transition-transform motion-safe:duration-150 group-hover:translate-x-0.5"
+            />
+          </Link>
+
+          <div className="mt-auto flex items-end gap-4 border-t border-ink/10 pt-4">
+            {stats && <p className="font-mono text-[11px] leading-5 text-ink">{stats}</p>}
+          </div>
         </div>
-        <div className="recipe-wave absolute inset-x-0 bottom-0 h-5" aria-hidden="true" />
+
         <FavouriteButton
           isFavourite={recipe.is_favourite ?? false}
           onToggle={() => onToggleFavourite(recipe.id as string)}
-          className="absolute left-2 top-2 z-10 -rotate-6 border-2 border-ink bg-paper shadow-sticker-sm"
+          className="absolute bottom-4 right-4 z-10 border border-berry/30 bg-paper/90 text-berry"
         />
-      </div>
+      </article>
+    )
+  }
 
-      <div className="space-y-2 p-4 pt-3.5">
-        <div>
-          <p className="font-mono text-[9.5px] font-bold uppercase tracking-[0.1em] text-ink">
-            {recipe.category_label}
-          </p>
-          <h3 className="font-display text-[24px] font-extrabold tracking-[-0.03em] text-ink">
-            {recipe.name}
-          </h3>
-          {recipe.profile && (
-            <p className="mt-1 line-clamp-2 text-[13px] text-muted">{recipe.profile}</p>
+  return (
+    <article className="group relative border-b border-line/80 py-4" style={style}>
+      <Link
+        to={`/recipe/${recipe.slug}`}
+        aria-label={`View ${recipe.name ?? 'recipe'} recipe`}
+        className="grid min-h-28 grid-cols-[112px_1fr] gap-4 pr-10"
+      >
+        <div className="overflow-hidden rounded-[20px] bg-[var(--tint)]">
+          {artwork ? (
+            <img src={artwork} alt="" className="h-full w-full object-cover" />
+          ) : (
+            <div className="flex h-full items-end p-3">
+              <span className="font-mono text-[9px] font-medium uppercase tracking-[0.14em] text-ink">
+                {recipe.category_label}
+              </span>
+            </div>
           )}
         </div>
 
-        {stats.length > 0 && (
-          <p className="font-mono text-[11px] text-ink">
-            {stats.map((stat, index) => (
-              <span key={stat.text}>
-                {index > 0 && <span className="text-ink/35">{' · '}</span>}
-                <span className={stat.emphasis ? 'font-bold' : 'font-normal'}>{stat.text}</span>
-              </span>
-            ))}
-          </p>
-        )}
+        <div className="flex min-w-0 flex-col py-1">
+          <h3 className="font-display text-[25px] font-normal leading-[1.02] tracking-[-0.04em] text-ink">
+            {recipe.name}
+          </h3>
+          {recipe.profile && (
+            <p className="mt-2 line-clamp-2 text-[13px] leading-5 text-muted">{recipe.profile}</p>
+          )}
+          {stats && <p className="mt-auto pt-2 font-mono text-[11px] text-muted">{stats}</p>}
+        </div>
+      </Link>
 
-        <Link
-          to={`/recipe/${recipe.slug}`}
-          aria-label={`View ${recipe.name ?? 'recipe'} recipe`}
-          className="flex items-center justify-between pt-1 text-[13px] font-medium text-ink after:absolute after:inset-0 after:content-['']"
-        >
-          View recipe
-          <ArrowRight
-            size={16}
-            aria-hidden="true"
-            className="transition-transform motion-safe:duration-150 group-hover:translate-x-0.5"
-          />
-        </Link>
-      </div>
+      <FavouriteButton
+        isFavourite={recipe.is_favourite ?? false}
+        onToggle={() => onToggleFavourite(recipe.id as string)}
+        className="absolute right-0 top-3 bg-transparent text-muted"
+      />
     </article>
   )
 }

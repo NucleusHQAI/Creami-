@@ -9,6 +9,7 @@ import type { RecipeWithLines } from '@/types/domain'
 function buildRecipe(): RecipeWithLines {
   return {
     id: 'recipe-1',
+    image_path: null,
     slug: 'vanilla-custard',
     name: 'Vanilla Custard',
     category_id: 'cat-1',
@@ -106,19 +107,30 @@ describe('recipeToFormValues', () => {
 describe('formValuesToInput', () => {
   it('round-trips a recipe through form values and back to an input', () => {
     const values = recipeToFormValues(buildRecipe())
-    const input = formValuesToInput(values, { id: 'recipe-1', isFavourite: false })
+    const input = formValuesToInput(values, {
+      id: 'recipe-1',
+      isFavourite: false,
+      imagePath: null,
+    })
 
     expect(input.id).toBe('recipe-1')
     expect(input.name).toBe('Vanilla Custard')
     expect(input.ingredients).toHaveLength(2)
-    expect(at(input.ingredients, 0)).toMatchObject({ ingredientId: null, freeText: 'a squeeze of something' })
-    expect(at(input.ingredients, 1)).toMatchObject({ ingredientId: 'ing-1', quantity: 5, unit: 'g' })
+    expect(at(input.ingredients, 0)).toMatchObject({
+      ingredientId: null,
+      freeText: 'a squeeze of something',
+    })
+    expect(at(input.ingredients, 1)).toMatchObject({
+      ingredientId: 'ing-1',
+      quantity: 5,
+      unit: 'g',
+    })
   })
 
   it('clears quantity/unit for free-text lines even if stale values are present', () => {
     const values = recipeToFormValues(buildRecipe())
     values.additions[0] = { ...at(values.additions, 0), quantity: 3, unit: 'g' }
-    const input = formValuesToInput(values, { isFavourite: false })
+    const input = formValuesToInput(values, { isFavourite: false, imagePath: null })
     expect(at(input.ingredients, 0)).toMatchObject({ quantity: null, unit: null })
   })
 })

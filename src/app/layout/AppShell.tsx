@@ -21,7 +21,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <main
         id="main-content"
         tabIndex={-1}
-        className="mx-auto max-w-content px-4 pb-24 pt-4 sm:px-6 md:pb-10"
+        className="mx-auto max-w-content px-5 pb-28 pt-10 sm:px-6 md:pb-12 md:pt-10"
       >
         {children}
       </main>

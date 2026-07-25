@@ -8,6 +8,12 @@ export interface CreateTastingNoteInput {
   notes?: string
 }
 
+export interface UpdateTastingNoteInput {
+  id: string
+  rating?: number
+  notes?: string
+}
+
 export async function createTastingNote(input: CreateTastingNoteInput): Promise<TastingNote> {
   const { data, error } = await supabase
     .from('tasting_notes')
@@ -17,6 +23,20 @@ export async function createTastingNote(input: CreateTastingNoteInput): Promise<
       rating: input.rating ?? null,
       notes: input.notes ?? null,
     })
+    .select()
+    .single()
+  if (error) throw error
+  return data
+}
+
+export async function updateTastingNote(input: UpdateTastingNoteInput): Promise<TastingNote> {
+  const { data, error } = await supabase
+    .from('tasting_notes')
+    .update({
+      rating: input.rating ?? null,
+      notes: input.notes ?? null,
+    })
+    .eq('id', input.id)
     .select()
     .single()
   if (error) throw error

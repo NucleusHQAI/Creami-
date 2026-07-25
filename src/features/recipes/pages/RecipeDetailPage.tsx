@@ -25,6 +25,7 @@ import { LogBatchSheet } from '@/features/freezer/components/LogBatchSheet'
 import { RatingsSection } from '@/features/freezer/components/RatingsSection'
 import { RecipeInsights } from '@/features/freezer/components/RecipeInsights'
 import { useAddToPlan } from '@/features/shopping/hooks/useAddToPlan'
+import { getRecipeImageUrl } from '@/lib/api/recipe-images'
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
@@ -45,7 +46,12 @@ export default function RecipeDetailPage() {
   const { slug } = useParams<{ slug: string }>()
   const navigate = useNavigate()
   const { data: recipe, isLoading, isError, refetch } = useRecipe(slug)
-  const { data: bases, isLoading: isBasesLoading, isError: isBasesError, refetch: refetchBases } = useBases()
+  const {
+    data: bases,
+    isLoading: isBasesLoading,
+    isError: isBasesError,
+    refetch: refetchBases,
+  } = useBases()
   const {
     data: ingredients,
     isLoading: isIngredientsLoading,
@@ -143,6 +149,7 @@ export default function RecipeDetailPage() {
 
   const methodText = recipe.method_override ?? settings?.standard_method ?? ''
   const methodSteps = methodText ? splitIntoSteps(methodText) : []
+  const recipeImageUrl = getRecipeImageUrl(recipe.image_path)
 
   return (
     <div className="space-y-6 pb-8">
@@ -160,9 +167,7 @@ export default function RecipeDetailPage() {
           <div className="flex items-center gap-1">
             <FavouriteButton
               isFavourite={recipe.is_favourite}
-              onToggle={() =>
-                toggleFavourite.mutate({ id: recipe.id, next: !recipe.is_favourite })
-              }
+              onToggle={() => toggleFavourite.mutate({ id: recipe.id, next: !recipe.is_favourite })}
             />
             <RecipeOverflowMenu
               onEdit={() => navigate(`/recipe/${recipe.slug}/edit`)}
@@ -175,6 +180,14 @@ export default function RecipeDetailPage() {
         </div>
         {recipe.profile && <p className="text-[15px] text-muted">{recipe.profile}</p>}
       </header>
+
+      {recipeImageUrl && (
+        <img
+          src={recipeImageUrl}
+          alt={`${recipe.name} ice cream`}
+          className="aspect-[4/3] w-full rounded-[28px] object-cover"
+        />
+      )}
 
       {/* 2. Serving toggle */}
       <ServingToggle
