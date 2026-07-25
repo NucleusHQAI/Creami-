@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
-import { Inbox, Search } from 'lucide-react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { Inbox, Plus, Search } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { ErrorState } from '@/components/ui/ErrorState'
@@ -15,16 +15,20 @@ import {
 import { RecipeSortControl } from '@/features/recipes/components/RecipeSortControl'
 import { useDebouncedValue } from '@/features/recipes/hooks/useDebouncedValue'
 import { useRecipes } from '@/features/recipes/hooks/useRecipes'
+import { useRotatingFeaturedRecipe } from '@/features/recipes/hooks/useRotatingFeaturedRecipe'
 import { useSortPreference } from '@/features/recipes/hooks/useSortPreference'
 import { useToggleFavourite } from '@/features/recipes/hooks/useToggleFavourite'
 import { useCategories } from '@/features/reference/hooks/useCategories'
+import { useOnlineStatus } from '@/lib/online-status'
 
 export default function RecipeListPage() {
+  const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const [searchInput, setSearchInput] = useState(searchParams.get('q') ?? '')
   const debouncedSearch = useDebouncedValue(searchInput, 150)
   const [chip, setChip] = useState<FilterChipValue>('all')
   const [sort, setSort] = useSortPreference()
+  const isOnline = useOnlineStatus()
 
   const { data: categories } = useCategories()
   const toggleFavourite = useToggleFavourite()
@@ -38,8 +42,9 @@ export default function RecipeListPage() {
 
   const { items, isLoading, isError, refetch } = useRecipes(filters)
   const hasActiveFilters = Boolean(debouncedSearch) || chip !== 'all'
-  const featuredItem = items?.[0]
-  const remainingItems = items?.slice(1) ?? []
+  const rotatingFeaturedItem = useRotatingFeaturedRecipe(items)
+  const featuredItem = hasActiveFilters ? items?.[0] : rotatingFeaturedItem
+  const remainingItems = items?.filter((item) => item !== featuredItem) ?? []
 
   function handleSearchChange(next: string) {
     setSearchInput(next)
@@ -63,14 +68,23 @@ export default function RecipeListPage() {
 
   return (
     <div>
-      <header className="relative">
+      <header>
         <p className="font-mono text-[10px] font-medium uppercase tracking-[0.2em] text-berrydk">
           CREAMi Deluxe
         </p>
         <h1 className="mt-3 font-display text-[clamp(54px,16vw,84px)] font-normal leading-[0.9] tracking-[-0.06em] text-ink">
           Recipes
         </h1>
-        <div className="absolute right-0 top-0">
+        <div className="mt-4 flex items-center justify-between gap-2">
+          <Button
+            size="sm"
+            onClick={() => navigate('/recipe/new')}
+            disabled={!isOnline}
+            title={isOnline ? undefined : 'Reconnect before adding a recipe.'}
+          >
+            <Plus size={16} aria-hidden="true" />
+            Add recipe
+          </Button>
           <RecipeSortControl value={sort} onChange={setSort} />
         </div>
       </header>
@@ -130,7 +144,16 @@ export default function RecipeListPage() {
                 <Button variant="secondary" size="sm" onClick={clearFilters}>
                   Clear filters
                 </Button>
-              ) : undefined
+              ) : (
+                <Button
+                  onClick={() => navigate('/recipe/new')}
+                  disabled={!isOnline}
+                  title={isOnline ? undefined : 'Reconnect before adding a recipe.'}
+                >
+                  <Plus size={16} aria-hidden="true" />
+                  Add recipe
+                </Button>
+              )
             }
           />
         </div>

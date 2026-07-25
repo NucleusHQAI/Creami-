@@ -133,9 +133,7 @@ function SettingsForm({ settings, ingredients, bases }: SettingsFormProps) {
   const watchedMilkId = watch('default_milk_ingredient_id')
 
   const previewRecipe = previewRecipeQuery.data
-  const previewBase = previewRecipe
-    ? bases.find((base) => base.id === previewRecipe.base_id)
-    : undefined
+  const previewBase = previewRecipe ? bases.find((base) => base.id === previewRecipe.base_id) : undefined
 
   const preview = useMemo(() => {
     if (!previewRecipe || !previewBase) return null
@@ -151,11 +149,7 @@ function SettingsForm({ settings, ingredients, bases }: SettingsFormProps) {
       defaultMilkIngredientId: watchedMilkId || settings.default_milk_ingredient_id,
     })
 
-    return {
-      name: previewRecipe.name,
-      before: before.perServing.kcal,
-      after: after.perServing.kcal,
-    }
+    return { name: previewRecipe.name, before: before.perServing.kcal, after: after.perServing.kcal }
   }, [previewRecipe, previewBase, ingredients, settings, watchedMaxFill, watchedMilkId])
 
   async function onSubmit(values: SettingsFormValues) {
@@ -179,11 +173,7 @@ function SettingsForm({ settings, ingredients, bases }: SettingsFormProps) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <Field
-        label="Freezer fill volume (ml)"
-        error={errors.max_fill_ml}
-        hint="The frozen base target before mix-ins. Recalculates every recipe's milk and macros."
-      >
+      <Field label="MAX FILL volume (ml)" error={errors.max_fill_ml} hint="Recalculates every recipe's derived fill and macros.">
         {(field) => (
           <input
             type="number"
@@ -196,11 +186,7 @@ function SettingsForm({ settings, ingredients, bases }: SettingsFormProps) {
         )}
       </Field>
 
-      <Field
-        label="Default milk"
-        error={errors.default_milk_ingredient_id}
-        hint="Swaps the fill ingredient everywhere."
-      >
+      <Field label="Default milk" error={errors.default_milk_ingredient_id} hint="Swaps the fill ingredient everywhere.">
         {(field) => (
           <select {...register('default_milk_ingredient_id')} {...field} className={inputClasses}>
             <option value="" disabled>
@@ -239,11 +225,7 @@ function SettingsForm({ settings, ingredients, bases }: SettingsFormProps) {
         )}
       </Field>
 
-      <Field
-        label="Servings per tub"
-        error={errors.servings_per_tub}
-        hint="Divides the per-serving figures."
-      >
+      <Field label="Servings per tub" error={errors.servings_per_tub} hint="Divides the per-serving figures.">
         {(field) => (
           <input
             type="number"
@@ -256,11 +238,7 @@ function SettingsForm({ settings, ingredients, bases }: SettingsFormProps) {
         )}
       </Field>
 
-      <Field
-        label="Standard method"
-        error={errors.standard_method}
-        hint="Shown on recipes with no override."
-      >
+      <Field label="Standard method" error={errors.standard_method} hint="Shown on recipes with no override.">
         {(field) => (
           <textarea
             {...register('standard_method')}
@@ -311,12 +289,7 @@ function AboutSection() {
       <Card className="space-y-2 p-4 text-[13px] text-muted">
         <p>CREAMi Deluxe, version {APP_VERSION}.</p>
         <p>
-          <a
-            href={REPO_URL}
-            target="_blank"
-            rel="noreferrer"
-            className="text-berry underline underline-offset-2"
-          >
+          <a href={REPO_URL} target="_blank" rel="noreferrer" className="text-berry underline underline-offset-2">
             View the repository
           </a>
         </p>
@@ -353,12 +326,7 @@ function ExportSection() {
           Download everything — categories, ingredients, bases and recipes — as one JSON file. Not a
           sync mechanism, just a way to have a copy.
         </p>
-        <Button
-          type="button"
-          variant="secondary"
-          onClick={handleExport}
-          disabled={exportData.isPending}
-        >
+        <Button type="button" variant="secondary" onClick={handleExport} disabled={exportData.isPending}>
           {exportData.isPending ? 'Preparing…' : 'Export as JSON'}
         </Button>
       </Card>

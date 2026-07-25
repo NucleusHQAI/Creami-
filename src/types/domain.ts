@@ -15,6 +15,8 @@ export type PlanItem = Tables<'plan_items'>
 export type ShoppingExtra = Tables<'shopping_extras'>
 export type ShoppingCheck = Tables<'shopping_checks'>
 export type AppSettings = Tables<'app_settings'>
+export type AdaptationRule = Tables<'adaptation_rules'>
+export type RecipeSource = Tables<'recipe_sources'>
 export type RecipeListRow = Tables<'recipe_list_view'>
 export type RecipeRatingsRow = Tables<'recipe_ratings'>
 
@@ -33,4 +35,8 @@ export interface RecipeWithLines extends Recipe {
   category: Category
   base: Base
   ingredients: Array<RecipeIngredient & { ingredient: Ingredient | null }>
+}
+
+export interface RecipeDetail extends RecipeWithLines {
+  sources: RecipeSource[]
 }

@@ -1,5 +1,11 @@
 import { supabase } from '@/lib/supabase'
-import type { IngredientUnit, Recipe, RecipeListRow, RecipeWithLines } from '@/types/domain'
+import type {
+  IngredientUnit,
+  Recipe,
+  RecipeDetail,
+  RecipeListRow,
+  RecipeWithLines,
+} from '@/types/domain'
 
 // The nested select behind both fetchRecipe and fetchRecipesWithLines.
 // `recipe_ingredients` is aliased to `ingredients` so the result lands
@@ -12,6 +18,14 @@ const RECIPE_WITH_LINES_SELECT = `
   category:categories(*),
   base:bases(*),
   ingredients:recipe_ingredients(*, ingredient:ingredients(*))
+`
+
+const RECIPE_DETAIL_SELECT = `
+  *,
+  category:categories(*),
+  base:bases(*),
+  ingredients:recipe_ingredients(*, ingredient:ingredients(*)),
+  sources:recipe_sources(*)
 `
 
 /** List rows for the recipe list screen — name, category, base, favourite and rating, but never macros (those depend on live settings and are computed client-side). */
@@ -40,15 +54,19 @@ export async function fetchRecipesWithLines(): Promise<RecipeWithLines[]> {
 }
 
 /** A single recipe, with its base and ingredient lines resolved, by slug. */
-export async function fetchRecipe(slug: string): Promise<RecipeWithLines> {
+export async function fetchRecipe(slug: string): Promise<RecipeDetail> {
   const { data, error } = await supabase
     .from('recipes')
-    .select(RECIPE_WITH_LINES_SELECT)
+    .select(RECIPE_DETAIL_SELECT)
     .eq('slug', slug)
     .is('archived_at', null)
     .single()
   if (error) throw error
-  return data as unknown as RecipeWithLines
+  const recipe = data as unknown as RecipeDetail
+  return {
+    ...recipe,
+    sources: [...recipe.sources].sort((a, b) => a.created_at.localeCompare(b.created_at)),
+  }
 }
 
 /** Total batches ever logged per recipe, for the "Most made" sort. Recipes with none are simply absent from the map. */

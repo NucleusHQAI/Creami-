@@ -26,7 +26,7 @@ import { RatingsSection } from '@/features/freezer/components/RatingsSection'
 import { RecipeInsights } from '@/features/freezer/components/RecipeInsights'
 import { useAddToPlan } from '@/features/shopping/hooks/useAddToPlan'
 import { getRecipeImageUrl } from '@/lib/api/recipe-images'
-import { DEFAULT_FREEZER_FILL_ML } from '@/lib/app-defaults'
+import { RecipeSourceCard } from '@/features/recipes/components/RecipeSourceCard'
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
@@ -71,12 +71,12 @@ export default function RecipeDetailPage() {
   const addToPlan = useAddToPlan()
 
   const [mode, setMode] = useState<ServingMode>('full')
-  const [customMl, setCustomMl] = useState(DEFAULT_FREEZER_FILL_ML)
+  const [customMl, setCustomMl] = useState(680)
   const [excludedOptionalIds, setExcludedOptionalIds] = useState<Set<string>>(new Set())
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [logBatchOpen, setLogBatchOpen] = useState(false)
 
-  const maxFillMl = settings?.max_fill_ml ?? DEFAULT_FREEZER_FILL_ML
+  const maxFillMl = settings?.max_fill_ml ?? 680
   const scale = mode === 'full' ? 1 : mode === 'half' ? 0.5 : customMl / maxFillMl
 
   const macroRecipe = useMemo<RecipeWithLines | undefined>(() => {
@@ -272,6 +272,8 @@ export default function RecipeDetailPage() {
           <p className="text-[15px] text-ink">{recipe.tip}</p>
         </Section>
       )}
+
+      <RecipeSourceCard sources={recipe.sources} />
 
       {/* 9. Ratings and notes, plus insights (docs/06 § Insights) */}
       <RecipeInsights recipeId={recipe.id} />

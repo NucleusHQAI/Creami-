@@ -32,8 +32,12 @@ import {
 import { ensureUniqueSlug, slugify } from '@/lib/slug'
 import { useOnlineStatus } from '@/lib/online-status'
 import { EmptyState } from '@/components/ui/EmptyState'
-import { WifiOff } from 'lucide-react'
+import { Sparkles, WifiOff } from 'lucide-react'
 import { getRecipeImageUrl, validateRecipeImage } from '@/lib/api/recipe-images'
+import { useAdaptationRules } from '@/features/recipes/hooks/useAdaptationRules'
+import { AdaptRecipeSheet } from '@/features/recipes/components/AdaptRecipeSheet'
+import { AdaptationReviewPanel } from '@/features/recipes/components/AdaptationReviewPanel'
+import type { AdaptationDecision, RecipeSourceInput } from '@/features/recipes/import/types'
 
 const textareaClass =
   'h-24 w-full rounded-soft border border-line bg-cream px-3 py-2 text-[14px] text-ink focus-visible:outline-none'
@@ -61,10 +65,17 @@ export default function RecipeEditPage() {
     refetch: refetchBases,
   } = useBases()
   const {
+    data: ingredients,
     isLoading: isIngredientsLoading,
     isError: isIngredientsError,
     refetch: refetchIngredients,
   } = useIngredients()
+  const {
+    data: adaptationRules,
+    isLoading: isRulesLoading,
+    isError: isRulesError,
+    refetch: refetchRules,
+  } = useAdaptationRules(!isEditing)
   const {
     isLoading: isSettingsLoading,
     isError: isSettingsError,
@@ -79,6 +90,10 @@ export default function RecipeEditPage() {
   const [photoFile, setPhotoFile] = useState<File | null>(null)
   const [photoRemoved, setPhotoRemoved] = useState(false)
   const [photoError, setPhotoError] = useState<string | null>(null)
+  const [adaptOpen, setAdaptOpen] = useState(false)
+  const [adaptationDecisions, setAdaptationDecisions] = useState<AdaptationDecision[]>([])
+  const [pendingSource, setPendingSource] = useState<RecipeSourceInput | null>(null)
+  const [adaptationDirty, setAdaptationDirty] = useState(false)
   const allowNavigationRef = useRef(false)
 
   const {
@@ -107,7 +122,7 @@ export default function RecipeEditPage() {
   }, [existingRecipe, reset])
 
   const photoDirty = photoFile !== null || photoRemoved
-  const hasUnsavedChanges = isDirty || photoDirty
+  const hasUnsavedChanges = isDirty || photoDirty || adaptationDirty
 
   // Warn before navigating away from a dirty form, per docs/05 § Saving.
   const blocker = useBlocker(
@@ -163,17 +178,27 @@ export default function RecipeEditPage() {
         }),
         imageFile: photoFile,
         previousImagePath: currentImagePath,
+        source: pendingSource,
       },
       {
-        onSuccess: (recipe) => {
+        onSuccess: ({ recipe, sourceAttached }) => {
           // Clears isDirty before navigating, so the unsaved-changes blocker
           // doesn't immediately fire on a save that just succeeded.
           reset(values, { keepValues: true })
           setPhotoFile(null)
           setPhotoRemoved(false)
           setPhotoError(null)
+          setPendingSource(null)
+          setAdaptationDirty(false)
           allowNavigationRef.current = true
-          showToast(isEditing ? 'Recipe saved' : 'Recipe created')
+          showToast(
+            sourceAttached
+              ? isEditing
+                ? 'Recipe saved'
+                : 'Recipe created'
+              : 'Recipe saved, but its source link could not be attached.',
+            sourceAttached ? undefined : { variant: 'error', durationMs: 7000 },
+          )
           navigate(`/recipe/${recipe.slug}`)
         },
         onError: () => showToast("Couldn't save this recipe — try again", { variant: 'error' }),
@@ -196,6 +221,7 @@ export default function RecipeEditPage() {
     isCategoriesLoading ||
     isBasesLoading ||
     isIngredientsLoading ||
+    (!isEditing && isRulesLoading) ||
     isSettingsLoading
   ) {
     return (
@@ -211,7 +237,13 @@ export default function RecipeEditPage() {
     return <ErrorState message="Couldn't load this recipe to edit." onRetry={refetch} />
   }
 
-  if (isCategoriesError || isBasesError || isIngredientsError || isSettingsError) {
+  if (
+    isCategoriesError ||
+    isBasesError ||
+    isIngredientsError ||
+    (!isEditing && isRulesError) ||
+    isSettingsError
+  ) {
     return (
       <ErrorState
         message="Couldn't load the ingredient library needed to edit a recipe."
@@ -219,6 +251,7 @@ export default function RecipeEditPage() {
           void refetchCategories()
           void refetchBases()
           void refetchIngredients()
+          void refetchRules()
           void refetchSettings()
         }}
       />
@@ -230,6 +263,15 @@ export default function RecipeEditPage() {
       <h1 className="font-display text-[clamp(28px,5vw,36px)] tracking-[-0.04em] text-ink">
         {isEditing ? `Edit ${existingRecipe?.name}` : 'New recipe'}
       </h1>
+
+      {!isEditing && (
+        <Button type="button" variant="secondary" onClick={() => setAdaptOpen(true)}>
+          <Sparkles size={16} aria-hidden="true" />
+          Adapt from an online recipe
+        </Button>
+      )}
+
+      {adaptationDecisions.length > 0 && <AdaptationReviewPanel decisions={adaptationDecisions} />}
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <Field label="Name" error={errors.name}>
@@ -374,6 +416,35 @@ export default function RecipeEditPage() {
             setDeleteOpen(false)
             reset(getValues(), { keepValues: true })
             archiveWithUndo(existingRecipe, () => navigate('/'))
+          }}
+        />
+      )}
+
+      {!isEditing && (
+        <AdaptRecipeSheet
+          open={adaptOpen}
+          onClose={() => setAdaptOpen(false)}
+          isOnline={isOnline}
+          bases={bases ?? []}
+          ingredients={ingredients ?? []}
+          categories={categories ?? []}
+          rules={adaptationRules ?? []}
+          onUse={(draft) => {
+            if (
+              hasUnsavedChanges &&
+              !window.confirm('Replace your current recipe draft with this adaptation?')
+            ) {
+              return
+            }
+            const values = {
+              ...draft.values,
+              slug: ensureUniqueSlug(draft.values.slug, existingSlugs),
+            }
+            reset(values)
+            setSlugTouched(true)
+            setAdaptationDecisions(draft.decisions)
+            setPendingSource(draft.source)
+            setAdaptationDirty(true)
           }}
         />
       )}

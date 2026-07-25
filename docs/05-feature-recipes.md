@@ -83,11 +83,11 @@ The heart must `stopPropagation` or every favourite also navigates.
 This is the detail that makes the app more useful than the document it replaces. Show it as a real ingredient, visually distinguished:
 
 ```
-  Skimmed milk ......................... 253ml
-  ↳ topped up to your 525ml freezer fill line; mix-ins are added afterwards
+  Skimmed milk ......................... 393ml
+  ↳ topped up to your 680ml MAX FILL line
 ```
 
-It moves when the recipe or the fill setting changes. Mix-ins are included in the macros but never reduce this milk quantity because they are added after spinning.
+It moves when the recipe or the fill setting changes, which is exactly the information a person standing over a blender needs.
 
 ### Scaling
 

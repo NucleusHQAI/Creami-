@@ -5,11 +5,14 @@ import { beforeEach, expect, test, vi } from 'vitest'
 import type { RecipeInput } from '@/lib/api/recipes'
 import type { Recipe } from '@/types/domain'
 
-const { upsertRecipe, uploadRecipeImage, removeRecipeImage } = vi.hoisted(() => ({
-  upsertRecipe: vi.fn(),
-  uploadRecipeImage: vi.fn(),
-  removeRecipeImage: vi.fn(),
-}))
+const { upsertRecipe, uploadRecipeImage, removeRecipeImage, insertRecipeSource } = vi.hoisted(
+  () => ({
+    upsertRecipe: vi.fn(),
+    uploadRecipeImage: vi.fn(),
+    removeRecipeImage: vi.fn(),
+    insertRecipeSource: vi.fn(),
+  }),
+)
 
 vi.mock('@/lib/api/recipes', () => ({ upsertRecipe }))
 vi.mock('@/lib/api/recipe-images', () => ({
@@ -17,6 +20,7 @@ vi.mock('@/lib/api/recipe-images', () => ({
   removeRecipeImage,
   isUploadedRecipeImage: (path: string | null) => path !== null && !path.startsWith('/'),
 }))
+vi.mock('@/lib/api/recipe-sources', () => ({ insertRecipeSource }))
 
 import { useSaveRecipe } from '@/features/recipes/hooks/useSaveRecipe'
 
@@ -67,6 +71,7 @@ test('uploads a replacement, saves its path and removes the previous upload', as
       input,
       imageFile: file,
       previousImagePath: 'uploads/old.webp',
+      source: null,
     })
   })
 
@@ -90,9 +95,39 @@ test('removes a new upload when the recipe save fails', async () => {
         input,
         imageFile: file,
         previousImagePath: 'uploads/old.webp',
+        source: null,
       }),
     ).rejects.toThrow('save failed')
   })
 
   expect(removeRecipeImage).toHaveBeenCalledWith('uploads/new.webp')
+})
+
+test('keeps the recipe saved when source attribution fails', async () => {
+  upsertRecipe.mockResolvedValue({
+    id: 'recipe-1',
+    slug: 'birthday-cake',
+    image_path: null,
+  } as Recipe)
+  insertRecipeSource.mockRejectedValue(new Error('source failed'))
+  const { result } = renderHook(() => useSaveRecipe(), { wrapper: createWrapper() })
+
+  let savedSource = true
+  await act(async () => {
+    const saved = await result.current.mutateAsync({
+      input,
+      imageFile: null,
+      previousImagePath: null,
+      source: {
+        sourceUrl: 'https://example.com/recipe',
+        sourceTitle: 'Birthday cake',
+        sourceSite: 'example.com',
+        adaptationSummary: 'Adapted around Everyday creamy.',
+        retrievedAt: null,
+      },
+    })
+    savedSource = saved.sourceAttached
+  })
+
+  expect(savedSource).toBe(false)
 })

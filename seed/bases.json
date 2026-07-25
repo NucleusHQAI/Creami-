@@ -1,7 +1,7 @@
 {
   "_meta": {
-    "fill_ingredient": "Every base nominates one ingredient as the fill ingredient. Its listed quantity is the starting amount; the macro engine then tops that ingredient up until the frozen base reaches the configured freezer fill volume (default 525ml). Base ingredients and blended flavour additions occupy that volume; mix-ins are added after spinning and do not displace the fill ingredient.",
-    "quantities": "Quantities are per one 525ml frozen base, with listed mix-ins added afterwards."
+    "fill_ingredient": "Every base nominates one ingredient as the fill ingredient. Its listed quantity is the starting amount; the macro engine then tops that ingredient up until the tub reaches the configured MAX FILL volume (default 680ml). This is what makes the totals honest — a recipe with 160g of mango needs less top-up milk than a plain vanilla one, and the calculated macros reflect that automatically.",
+    "quantities": "Quantities are per one full Deluxe tub."
   },
   "bases": [
     {

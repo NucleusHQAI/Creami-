@@ -28,7 +28,7 @@ function toMacroIngredient(ingredient: Ingredient): MacroIngredient {
 }
 
 /**
- * Computes a base's macros alone — its own lines, topped up to the freezer fill with
+ * Computes a base's macros alone — its own lines, topped up to MAX FILL with
  * the default milk, with no recipe additions or mix-ins. This is the floor
  * figure shown on `/bases`: "any recipe on this base has at least this."
  */
@@ -37,9 +37,7 @@ export function calculateBaseOnlyMacros(
   ingredients: Ingredient[],
   settings: AppSettings,
 ): MacroResult {
-  const ingredientMap = new Map(
-    ingredients.map((ingredient) => [ingredient.id, toMacroIngredient(ingredient)]),
-  )
+  const ingredientMap = new Map(ingredients.map((ingredient) => [ingredient.id, toMacroIngredient(ingredient)]))
 
   const baseLines: MacroLine[] = base.ingredients.map((line) => ({
     ingredientId: line.ingredient_id,

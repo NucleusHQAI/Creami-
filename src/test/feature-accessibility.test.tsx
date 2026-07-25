@@ -17,7 +17,7 @@ const macros: MacroResult = {
   perTub: { kcal: 320, protein_g: 28, carbs_g: 35, fat_g: 8 },
   perServing: { kcal: 160, protein_g: 14, carbs_g: 17.5, fat_g: 4 },
   fillVolumeMl: 300,
-  occupiedVolumeMl: 525,
+  occupiedVolumeMl: 680,
   overflows: false,
   excludedLines: [],
   warnings: [],
@@ -27,7 +27,12 @@ test('recipe controls have no axe violations', async () => {
   const { container } = render(
     <main>
       <h1>Berry recipe</h1>
-      <ServingToggle mode="full" customMl={500} maxFillMl={525} onChange={vi.fn()} />
+      <ServingToggle
+        mode="full"
+        customMl={500}
+        maxFillMl={680}
+        onChange={vi.fn()}
+      />
       <MacroPanel
         macros={macros}
         overrideKcal={null}
@@ -83,7 +88,12 @@ test('shopping controls have no axe violations', async () => {
       <ul>
         <ShoppingLineRow line={line} checked={false} onToggle={vi.fn()} />
       </ul>
-      <PlanChip recipeName="Berry" multiplier={1} onMultiplierChange={vi.fn()} onRemove={vi.fn()} />
+      <PlanChip
+        recipeName="Berry"
+        multiplier={1}
+        onMultiplierChange={vi.fn()}
+        onRemove={vi.fn()}
+      />
     </main>,
   )
 
@@ -110,7 +120,9 @@ test('reference and settings controls have no axe violations', async () => {
               </select>
             )}
           </Field>
-          <Field label="Method notes">{(props) => <textarea {...props} />}</Field>
+          <Field label="Method notes">
+            {(props) => <textarea {...props} />}
+          </Field>
         </section>
       </main>
     </MemoryRouter>,

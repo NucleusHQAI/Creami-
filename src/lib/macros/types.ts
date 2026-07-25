@@ -40,9 +40,9 @@ export interface Macros {
 export interface MacroResult {
   perTub: Macros
   perServing: Macros
-  fillVolumeMl: number // derived milk in the frozen base, in ml
+  fillVolumeMl: number // derived milk, in ml
   occupiedVolumeMl: number
-  overflows: boolean // base ingredients and additions exceeded the freezer-fill target
+  overflows: boolean // occupied volume exceeded the tub
   excludedLines: string[] // ingredient ids skipped, with reasons in `warnings`
   warnings: string[]
 }

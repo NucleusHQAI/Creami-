@@ -82,9 +82,7 @@ export default function BaseEditPage() {
     )
   }
 
-  return (
-    <BaseEditForm base={base} ingredients={ingredientsQuery.data} settings={settingsQuery.data} />
-  )
+  return <BaseEditForm base={base} ingredients={ingredientsQuery.data} settings={settingsQuery.data} />
 }
 
 interface BaseEditFormProps {
@@ -138,10 +136,7 @@ function BaseEditForm({ base, ingredients, settings }: BaseEditFormProps) {
     return Array.from(groups.entries()).sort(([a], [b]) => a.localeCompare(b))
   }, [ingredients])
 
-  const ingredientById = useMemo(
-    () => new Map(ingredients.map((ingredient) => [ingredient.id, ingredient])),
-    [ingredients],
-  )
+  const ingredientById = useMemo(() => new Map(ingredients.map((ingredient) => [ingredient.id, ingredient])), [ingredients])
 
   const previewMacros = useMemo(() => {
     const previewBase: BaseWithIngredients = {
@@ -208,7 +203,7 @@ function BaseEditForm({ base, ingredients, settings }: BaseEditFormProps) {
         <Field
           label="Fill ingredient"
           error={errors.fill_ingredient_id}
-          hint="This ingredient is topped up to the freezer fill line before mix-ins."
+          hint="This ingredient is topped up to the MAX FILL line."
         >
           {(fieldProps) => (
             <select {...register('fill_ingredient_id')} {...fieldProps} className={inputClasses}>
@@ -227,17 +222,10 @@ function BaseEditForm({ base, ingredients, settings }: BaseEditFormProps) {
 
         <div className="space-y-3">
           {fields.map((field, index) => (
-            <Card
-              key={field.id}
-              className="grid grid-cols-1 gap-3 p-4 sm:grid-cols-[1fr_auto_auto_auto]"
-            >
+            <Card key={field.id} className="grid grid-cols-1 gap-3 p-4 sm:grid-cols-[1fr_auto_auto_auto]">
               <Field label="Ingredient" error={errors.lines?.[index]?.ingredient_id}>
                 {(fieldProps) => (
-                  <select
-                    {...register(`lines.${index}.ingredient_id`)}
-                    {...fieldProps}
-                    className={inputClasses}
-                  >
+                  <select {...register(`lines.${index}.ingredient_id`)} {...fieldProps} className={inputClasses}>
                     {ingredientsByCategory.map(([category, categoryIngredients]) => (
                       <optgroup key={category} label={formatCategoryLabel(category)}>
                         {categoryIngredients.map((ingredient) => (
@@ -265,11 +253,7 @@ function BaseEditForm({ base, ingredients, settings }: BaseEditFormProps) {
               </Field>
               <Field label="Unit">
                 {(fieldProps) => (
-                  <select
-                    {...register(`lines.${index}.unit`)}
-                    {...fieldProps}
-                    className={`${inputClasses} w-24`}
-                  >
+                  <select {...register(`lines.${index}.unit`)} {...fieldProps} className={`${inputClasses} w-24`}>
                     <option value="g">g</option>
                     <option value="ml">ml</option>
                     <option value="item">item</option>
@@ -279,12 +263,7 @@ function BaseEditForm({ base, ingredients, settings }: BaseEditFormProps) {
               <div className="flex items-end justify-between gap-2 sm:flex-col sm:items-end">
                 <Field label="Note">
                   {(fieldProps) => (
-                    <input
-                      type="text"
-                      {...register(`lines.${index}.note`)}
-                      {...fieldProps}
-                      className={`${inputClasses} w-32`}
-                    />
+                    <input type="text" {...register(`lines.${index}.note`)} {...fieldProps} className={`${inputClasses} w-32`} />
                   )}
                 </Field>
                 <IconButton
@@ -301,17 +280,13 @@ function BaseEditForm({ base, ingredients, settings }: BaseEditFormProps) {
           ))}
         </div>
 
-        {errors.lines?.root && (
-          <p className="text-[13px] text-berry">{errors.lines.root.message}</p>
-        )}
+        {errors.lines?.root && <p className="text-[13px] text-berry">{errors.lines.root.message}</p>}
 
         <Button
           type="button"
           variant="secondary"
           size="sm"
-          onClick={() =>
-            append({ ingredient_id: ingredients[0]?.id ?? '', quantity: 0, unit: 'g', note: '' })
-          }
+          onClick={() => append({ ingredient_id: ingredients[0]?.id ?? '', quantity: 0, unit: 'g', note: '' })}
         >
           <Plus size={16} aria-hidden="true" />
           Add ingredient
@@ -332,11 +307,7 @@ function BaseEditForm({ base, ingredients, settings }: BaseEditFormProps) {
         </Button>
       </form>
 
-      <Sheet
-        open={pendingInput !== null}
-        onClose={() => setPendingInput(null)}
-        title="Confirm change"
-      >
+      <Sheet open={pendingInput !== null} onClose={() => setPendingInput(null)} title="Confirm change">
         <p className="text-[15px] text-ink">
           {usage.isLoading
             ? 'Checking how many recipes this affects…'

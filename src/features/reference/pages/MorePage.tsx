@@ -31,7 +31,7 @@ const ITEMS: MoreItem[] = [
   {
     to: '/settings',
     title: 'Settings',
-    description: 'Freezer fill, default milk, freezing, servings, and export.',
+    description: 'MAX FILL, default milk, freezing, servings, and export.',
     icon: Settings2,
   },
 ]
@@ -54,9 +54,7 @@ export default function MorePage() {
               <Icon size={20} aria-hidden="true" />
             </span>
             <span className="flex-1">
-              <span className="block font-display text-xl tracking-[-0.025em] text-ink">
-                {title}
-              </span>
+              <span className="block font-display text-xl tracking-[-0.025em] text-ink">{title}</span>
               <span className="block text-[13px] text-muted">{description}</span>
             </span>
             <ArrowRight

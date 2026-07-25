@@ -44,8 +44,8 @@ export default function BasesPage() {
           Bases
         </h1>
         <p className="mt-1 text-[13px] text-muted">
-          The six base formulas. Every recipe starts from one of these, topped up to your freezer
-          fill line with the default milk before mix-ins are added.
+          The six base formulas. Every recipe starts from one of these, topped up to your MAX FILL
+          line with the default milk.
         </p>
       </div>
 
@@ -56,11 +56,7 @@ export default function BasesPage() {
       )}
 
       {!isLoading && !isError && basesQuery.data && basesQuery.data.length === 0 && (
-        <EmptyState
-          icon={Layers}
-          title="No bases yet"
-          message="Base formulas will appear here once seeded."
-        />
+        <EmptyState icon={Layers} title="No bases yet" message="Base formulas will appear here once seeded." />
       )}
 
       {!isLoading && !isError && basesQuery.data && ingredientsQuery.data && settingsQuery.data && (
@@ -121,10 +117,7 @@ function BaseCard({ base, parent, ingredients, settings }: BaseCardProps) {
           .slice()
           .sort((a, b) => a.sort_order - b.sort_order)
           .map((line) => (
-            <li
-              key={line.id}
-              className="flex justify-between gap-3 border-b border-line/60 py-1 last:border-0"
-            >
+            <li key={line.id} className="flex justify-between gap-3 border-b border-line/60 py-1 last:border-0">
               <span>
                 {line.ingredient.name}
                 {line.note && <span className="text-muted"> — {line.note}</span>}
@@ -143,8 +136,7 @@ function BaseCard({ base, parent, ingredients, settings }: BaseCardProps) {
         <Pill>{macros.perTub.fat_g.toFixed(1)}g fat</Pill>
       </div>
       <p className="mt-2 text-[13px] text-muted">
-        The base alone, topped up to {settings.max_fill_ml}ml before mix-ins — the floor for any
-        recipe on this base.
+        The base alone, topped up to {settings.max_fill_ml}ml — the floor for any recipe on this base.
       </p>
     </Card>
   )

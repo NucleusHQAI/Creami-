@@ -1,12 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-const {
-  fetchBases,
-  fetchCategories,
-  fetchIngredients,
-  fetchSettings,
-  from,
-} = vi.hoisted(() => ({
+const { fetchBases, fetchCategories, fetchIngredients, fetchSettings, from } = vi.hoisted(() => ({
   fetchBases: vi.fn(),
   fetchCategories: vi.fn(),
   fetchIngredients: vi.fn(),
@@ -50,6 +44,8 @@ describe('fetchExportData', () => {
       plan_items: [{ table: 'plan_items' }],
       shopping_extras: [{ table: 'shopping_extras' }],
       shopping_checks: [{ table: 'shopping_checks' }],
+      recipe_sources: [{ table: 'recipe_sources' }],
+      adaptation_rules: [{ table: 'adaptation_rules' }],
     })
   })
 })

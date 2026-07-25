@@ -10,16 +10,16 @@ The original document is good and the app should feel like it. Same warm, editor
 
 These came out of a scoping interview and are settled. Don't relitigate them mid-build.
 
-| Question | Decision |
-|---|---|
-| Where does data live | Supabase — Postgres, with Supabase Auth |
-| Accounts | One shared household account. Public signup **off**; the account is created by hand in the Supabase dashboard |
-| Stack | React + Vite + TypeScript + Tailwind, deployed as a static build |
-| Hosting | Netlify, auto-deploying from this repo |
-| Design | Keep the original's look, rebuilt properly as components and tokens |
-| Macros | Calculated from an editable ingredient library, not typed in per recipe |
-| Freezer tracking | Batches with a 24-hour ready-at timer, plus a history |
-| Device | Phone-first, installable, readable offline |
+| Question             | Decision                                                                                                      |
+| -------------------- | ------------------------------------------------------------------------------------------------------------- |
+| Where does data live | Supabase — Postgres, with Supabase Auth                                                                       |
+| Accounts             | One shared household account. Public signup **off**; the account is created by hand in the Supabase dashboard |
+| Stack                | React + Vite + TypeScript + Tailwind, deployed as a static build                                              |
+| Hosting              | Netlify, auto-deploying from this repo                                                                        |
+| Design               | Keep the original's look, rebuilt properly as components and tokens                                           |
+| Macros               | Calculated from an editable ingredient library, not typed in per recipe                                       |
+| Freezer tracking     | Batches with a 24-hour ready-at timer, plus a history                                                         |
+| Device               | Phone-first, installable, readable offline                                                                    |
 
 Because there is exactly one account, anything that would otherwise need per-user scoping does not. A favourite is a favourite. A rating is the household's rating. This removes a great deal of complexity and is the main reason the schema is as small as it is.
 
@@ -46,7 +46,9 @@ Not "no forever" — just not now, and no task in the backlog builds toward them
 - Photo upload
 - Multiple user accounts, sharing, or anything public-facing
 - Printing and PDF export
-- Importing recipes from URLs
+- Copying arbitrary recipe prose or methods when structured recipe data is unavailable
+- Importing source nutrition totals, images or supermarket pricing
+- Automatically creating ingredients, bases or categories from online recipes
 - Nutrition beyond kcal, protein, carbs and fat
 - Support for CREAMi models other than the Deluxe
 - Anything social

@@ -43,12 +43,9 @@ export function ServingToggle({ mode, customMl, maxFillMl, onChange }: ServingTo
         {mode === 'custom' ? `Custom — ${customMl}ml` : 'Custom'}
       </Chip>
 
-      <Sheet open={sheetOpen} onClose={() => setSheetOpen(false)} title="Custom base fill">
+      <Sheet open={sheetOpen} onClose={() => setSheetOpen(false)} title="Custom fill">
         <div className="space-y-4">
-          <Field
-            label="Base fill volume (ml)"
-            hint={`Your freezer fill line is ${maxFillMl}ml before mix-ins.`}
-          >
+          <Field label="Fill volume (ml)" hint={`Your tub's MAX FILL line is ${maxFillMl}ml.`}>
             {(fieldProps) => (
               <input
                 {...fieldProps}

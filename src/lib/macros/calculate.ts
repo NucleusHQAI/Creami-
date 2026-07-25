@@ -25,7 +25,6 @@ interface ResolvedLine {
   ingredient: Ingredient
   quantity: number
   unit: 'g' | 'ml' | 'item'
-  role: MacroLine['role']
 }
 
 function macrosFor(line: ResolvedLine): Macros {
@@ -108,27 +107,19 @@ export function calculateMacros(input: CalculateMacrosInput): MacroResult {
     if (line.quantity === null || line.unit === null) {
       continue
     }
-    resolved.push({
-      ingredient,
-      quantity: line.quantity * scale,
-      unit: line.unit,
-      role: line.role,
-    })
+    resolved.push({ ingredient, quantity: line.quantity * scale, unit: line.unit })
   }
 
-  // 4. Occupied volume — the frozen base is filled before mix-ins are added
-  // after spinning, so only base ingredients and blended additions occupy the
-  // configured freezer-fill volume. Mix-ins still contribute macros below.
+  // 4. Occupied volume — sum the volume of every line that counts toward it.
   let occupiedVolumeMl = 0
   for (const line of resolved) {
-    if (line.role !== 'mixin' && line.ingredient.counts_toward_volume) {
+    if (line.ingredient.counts_toward_volume) {
       const grams = toGrams(line.quantity, line.unit, line.ingredient)
       occupiedVolumeMl += grams / line.ingredient.density_g_per_ml
     }
   }
 
-  // 5. Derived fill — top up the frozen base to the configured freezer-fill
-  // line with the default milk.
+  // 5. Derived fill — top up to MAX FILL with the default milk.
   const targetFillMl = settings.maxFillMl * scale
   const rawFillMl = targetFillMl - occupiedVolumeMl
   const overflows = rawFillMl <= 0
@@ -144,12 +135,7 @@ export function calculateMacros(input: CalculateMacrosInput): MacroResult {
     if (milkIngredient) {
       total = addMacros(
         total,
-        macrosFor({
-          ingredient: milkIngredient,
-          quantity: fillVolumeMl,
-          unit: 'ml',
-          role: 'base',
-        }),
+        macrosFor({ ingredient: milkIngredient, quantity: fillVolumeMl, unit: 'ml' }),
       )
     } else {
       warnings.push('No default milk ingredient configured — derived fill contributes no macros.')
@@ -159,7 +145,8 @@ export function calculateMacros(input: CalculateMacrosInput): MacroResult {
   // 7. Per serving — a serving is a fixed real-world portion, so dividing by
   // (servings × scale) normalises the scale back out of the per-tub total.
   const servingsDivisor = settings.servingsPerTub * scale
-  const perServing = servingsDivisor > 0 ? scaleMacros(total, 1 / servingsDivisor) : ZERO_MACROS
+  const perServing =
+    servingsDivisor > 0 ? scaleMacros(total, 1 / servingsDivisor) : ZERO_MACROS
 
   // Round once, at the very end, for display only.
   const round = (value: number, decimals: number) => {
@@ -175,8 +162,9 @@ export function calculateMacros(input: CalculateMacrosInput): MacroResult {
 
   // The derived fill is kept to one decimal place rather than the "whole
   // millilitres" display rule in docs/04-macro-engine.md's Rounding section —
-  // that rule is for the recipe-detail annotation, not this value. The golden
-  // vectors are only reproducible at one decimal of precision.
+  // that rule is for the recipe-detail annotation ("393ml"), not this value.
+  // The golden vectors (e.g. 393.4, and 196.7 at scale 0.5) are only
+  // reproducible at one decimal of precision.
   return {
     perTub: roundMacros(total),
     perServing: roundMacros(perServing),

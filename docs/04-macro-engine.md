@@ -4,11 +4,11 @@ Lives in `src/lib/macros/`. Pure functions, no React, no data fetching, no impor
 
 ## The problem it solves
 
-A CREAMi Deluxe recipe is not a fixed list of quantities. It is a base, plus blended flavour additions, plus **milk topped up to the 525ml freezer fill line**. Mix-ins are added after spinning, on top of that frozen-base volume. That distinction is what makes naive calculation wrong.
+A CREAMi Deluxe recipe is not a fixed list of quantities. It is a base, plus flavourings, plus **milk topped up to the MAX FILL line**. That last part is what makes naive calculation wrong.
 
 Take the fruit base. It nominally lists 325ml of milk. Put 160g of mango in and the tub is fuller, so less milk goes in — but a naive calculator still counts 325ml and overstates both calories and protein. Put nothing in and it needs more.
 
-So the fill ingredient's quantity is **derived, not read**. The engine works out how much room the base ingredients and blended additions take up, then fills the rest of the 525ml frozen base with milk. Mix-ins still contribute macros, but do not reduce the milk because they are added afterwards. This is exactly what a person does at the worktop, and it is why a mango tub genuinely has fewer calories than a plain vanilla one despite having fruit in it.
+So the fill ingredient's quantity is **derived, not read**. The engine works out how much room everything else takes up and fills the rest with milk. This is exactly what a person does at the worktop, and it is why a mango tub genuinely has fewer calories than a plain vanilla one despite having fruit in it.
 
 ## Algorithm
 
@@ -30,20 +30,17 @@ Inputs:  base (with ingredients), recipe ingredients, ingredient library,
    Multiply every quantity by `scale` (1 = full tub). Item quantities scale
    too and may become fractional — half a digestive is a real thing.
 
-4. Occupied frozen-base volume
-   For each base or addition line, if counts_toward_volume:
+4. Occupied volume
+   For each line, if counts_toward_volume:
        grams  = toGrams(quantity, unit, ingredient)
        volume = grams / density_g_per_ml
    Sum them.
-
-   Mix-in lines are excluded from occupied volume because they are added after
-   spinning. They remain in the macro total.
 
 5. Derived fill
    targetFill  = max_fill_ml × scale
    fillVolume  = max(0, targetFill − occupiedVolume)
 
-   If fillVolume is 0 the base mixture overflows the freezer-fill target. Return it as a warning
+   If fillVolume is 0 the recipe overflows the tub. Return it as a warning
    rather than an error — the numbers are still the best available, and the
    cook needs telling, not blocking.
 
@@ -143,8 +140,8 @@ export interface MacroResult {
   perTub: Macros
   perServing: Macros
   fillVolumeMl: number        // derived milk, in ml
-  occupiedVolumeMl: number    // base and blended additions only
-  overflows: boolean          // frozen-base volume exceeded the target
+  occupiedVolumeMl: number
+  overflows: boolean          // occupied volume exceeded the tub
   excludedLines: string[]     // ingredient ids skipped, with reasons in `warnings`
   warnings: string[]
 }
@@ -170,7 +167,7 @@ One entry point. Everything else in the folder is internal.
 
 ## Golden test vectors
 
-These are computed from the seed data with `max_fill_ml = 525`, `scale = 1`, optional mix-ins **included in macros but excluded from occupied frozen-base volume**. They are not illustrative — the implementation must reproduce them, and Task 9's tests assert them directly.
+These are computed from the seed data with `max_fill_ml = 680`, `scale = 1`, optional mix-ins **included**. They are not illustrative — the implementation must reproduce them, and Task 9's tests assert them directly.
 
 Tolerance: ±0.5 kcal and ±0.1g, to allow for floating-point ordering.
 
@@ -178,35 +175,34 @@ Tolerance: ±0.5 kcal and ±0.1g, to allow for floating-point ordering.
 
 | Recipe | Derived fill (ml) | kcal | Protein | Carbs | Fat |
 |---|---:|---:|---:|---:|---:|
-| `vanilla-custard` | 252.7 | 409 | 63.2 | 29.7 | 3.6 |
-| `mango-lassi` | 107.4 | 399 | 55.1 | 37.7 | 3.0 |
-| `double-chocolate-brownie` | 222.7 | 479 | 64.6 | 32.6 | 9.0 |
-| `cookies-and-cream` | 252.7 | 431 | 63.4 | 32.1 | 5.1 |
-| `pina-colada` | 47.4 | 457 | 53.1 | 33.8 | 11.3 |
+| `vanilla-custard` | 393.4 | 458.2 | 68.2 | 36.8 | 3.7 |
+| `mango-lassi` | 262.4 | 452.9 | 60.7 | 45.4 | 3.2 |
+| `double-chocolate-brownie` | 356.3 | 525.9 | 69.4 | 39.3 | 9.2 |
+| `cookies-and-cream` | 395.7 | 481.5 | 68.6 | 39.3 | 5.2 |
+| `pina-colada` | 188.2 | 505.8 | 58.2 | 40.9 | 11.5 |
 
 ### With `default_milk = semi-skimmed-milk`
 
 | Recipe | Derived fill (ml) | kcal | Protein | Carbs | Fat |
 |---|---:|---:|---:|---:|---:|
-| `vanilla-custard` | 252.7 | 447 | 63.2 | 29.2 | 7.9 |
-| `mango-lassi` | 107.4 | 415 | 55.1 | 37.5 | 4.9 |
-| `double-chocolate-brownie` | 222.7 | 513 | 64.6 | 32.2 | 12.8 |
-| `cookies-and-cream` | 252.7 | 469 | 63.4 | 31.6 | 9.4 |
-| `pina-colada` | 47.4 | 464 | 53.1 | 33.7 | 12.1 |
+| `vanilla-custard` | 393.4 | 517.2 | 68.2 | 36.0 | 10.4 |
+| `mango-lassi` | 262.4 | 492.3 | 60.7 | 44.9 | 7.6 |
+| `double-chocolate-brownie` | 356.3 | 579.4 | 69.4 | 38.6 | 15.2 |
+| `cookies-and-cream` | 395.7 | 540.9 | 68.6 | 38.5 | 12.0 |
+| `pina-colada` | 188.2 | 534.0 | 58.2 | 40.5 | 14.7 |
 
 Two things worth noticing, because they confirm the algorithm rather than contradict it:
 
 - **Derived fill is identical across both milks.** Milk type changes macros, not volume. If a test shows fill volume moving when the milk changes, the substitution is happening in the wrong order.
-- **Piña Colada derives only 47ml.** It carries 140g of pineapple *and* 80ml of coconut milk in the frozen base, so there is genuinely little room left. The toasted-coconut mix-in is added afterwards and does not displace milk.
+- **Piña Colada derives only 188ml.** It carries 140g of pineapple *and* 80ml of coconut milk, so there is genuinely little room left. That is the whole point of the derived fill.
 
 Also assert these edge cases:
 
 | Case | Expected |
 |---|---|
-| `scale = 0.5` on `vanilla-custard` | Every figure exactly half, `fillVolumeMl` 126.4 |
-| `excludeOptional = true` on `pina-colada` | Toasted coconut dropped, kcal falls by ~32.5 and fill stays unchanged |
-| Base and addition lines that exceed 525ml | `overflows: true`, `fillVolumeMl: 0`, still returns totals |
-| A mix-in at any quantity | Included in macros, excluded from occupied volume and overflow |
+| `scale = 0.5` on `vanilla-custard` | Every figure exactly half, `fillVolumeMl` 196.7 |
+| `excludeOptional = true` on `pina-colada` | Toasted coconut dropped, kcal falls by ~32.5 |
+| A recipe whose lines exceed 680ml | `overflows: true`, `fillVolumeMl: 0`, still returns totals |
 | A line with `ingredientId: null` | Skipped silently, listed in `warnings` |
 | An ingredient missing from the map | Skipped, added to `excludedLines`, never throws |
 | `negligible` ingredient at any quantity | Contributes exactly zero |
@@ -234,7 +230,7 @@ Four ingredients account for most of the total in every recipe. Correcting those
 |---|---|
 | Recipe card | kcal per tub, protein per tub |
 | Recipe detail | Full table: per tub and per serving, all four macros |
-| Recipe detail | Derived milk quantity, as a real ingredient line: "Skimmed milk — 253ml (to the 525ml freezer fill line; mix-ins added afterwards)" |
+| Recipe detail | Derived milk quantity, as a real ingredient line: "Skimmed milk — 393ml (to MAX FILL)" |
 | Recipe editor | Live recalculation as lines are added |
 | Scale toggle | Recomputes everything, announced to screen readers |
 

@@ -2,11 +2,7 @@ import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { buildShoppingList } from '@/features/shopping/aggregate'
-import type {
-  PlanItemWithRecipe,
-  PlanRecipeLine,
-  ShoppingIngredientLine,
-} from '@/features/shopping/types'
+import type { PlanItemWithRecipe, PlanRecipeLine, ShoppingIngredientLine } from '@/features/shopping/types'
 import type { MacroSettings, Unit } from '@/lib/macros/types'
 import type { Ingredient } from '@/types/domain'
 
@@ -63,9 +59,7 @@ interface SeedRecipe {
 const seedIngredients: SeedIngredient[] = JSON.parse(
   readFileSync(resolve(seedRoot, 'ingredients.json'), 'utf-8'),
 ).ingredients
-const seedBases: SeedBase[] = JSON.parse(
-  readFileSync(resolve(seedRoot, 'bases.json'), 'utf-8'),
-).bases
+const seedBases: SeedBase[] = JSON.parse(readFileSync(resolve(seedRoot, 'bases.json'), 'utf-8')).bases
 const seedRecipes: SeedRecipe[] = JSON.parse(
   readFileSync(resolve(seedRoot, 'recipes.json'), 'utf-8'),
 ).recipes
@@ -151,7 +145,7 @@ function buildPlanItem(
 }
 
 const skimmedSettings: MacroSettings = {
-  maxFillMl: 525,
+  maxFillMl: 680,
   servingsPerTub: 2,
   defaultMilkIngredientId: 'skimmed-milk',
 }
@@ -169,7 +163,7 @@ function findIngredientLine(
 }
 
 describe('buildShoppingList — derived fill, not the nominal amount', () => {
-  it('gives Mango Lassi 107ml of milk, not the fruit base nominal 325ml', () => {
+  it('gives Mango Lassi 262ml of milk, not the fruit base nominal 325ml', () => {
     const groups = buildShoppingList({
       plan: [buildPlanItem('mango-lassi', 1)],
       ingredients: ingredientMap,
@@ -180,7 +174,7 @@ describe('buildShoppingList — derived fill, not the nominal amount', () => {
     const milk = findIngredientLine(groups, 'skimmed-milk')
     expect(milk).toBeDefined()
     expect(milk?.quantity).not.toBeNull()
-    expect(Math.abs((milk?.quantity ?? 0) - 107.4)).toBeLessThanOrEqual(0.2)
+    expect(Math.abs((milk?.quantity ?? 0) - 262.4)).toBeLessThanOrEqual(0.2)
     expect(milk?.quantity).not.toBeCloseTo(325, 0)
   })
 
@@ -208,11 +202,9 @@ describe('buildShoppingList — summing across recipes', () => {
     })
 
     const milk = findIngredientLine(groups, 'skimmed-milk')
-    // Mango Lassi ~107.4ml + Vanilla Custard ~252.7ml, from the golden vectors.
-    expect(Math.abs((milk?.quantity ?? 0) - (107.4 + 252.7))).toBeLessThanOrEqual(0.5)
-    expect(milk?.recipes.map((r) => r.name).sort()).toEqual(
-      ['Mango Lassi', 'Vanilla Custard'].sort(),
-    )
+    // mango-lassi ~262.4ml + vanilla-custard ~393.4ml, from the golden vectors.
+    expect(Math.abs((milk?.quantity ?? 0) - (262.4 + 393.4))).toBeLessThanOrEqual(0.5)
+    expect(milk?.recipes.map((r) => r.name).sort()).toEqual(['Mango Lassi', 'Vanilla Custard'].sort())
   })
 })
 
@@ -324,9 +316,7 @@ describe('buildShoppingList — free-text lines', () => {
       includeOptional: true,
     })
 
-    const freeTextLines = groups
-      .flatMap((group) => group.lines)
-      .filter((line) => line.kind === 'freeText')
+    const freeTextLines = groups.flatMap((group) => group.lines).filter((line) => line.kind === 'freeText')
     expect(freeTextLines).toHaveLength(2)
     expect(freeTextLines.map((line) => (line.kind === 'freeText' ? line.recipeName : ''))).toEqual(
       expect.arrayContaining(['Mango Lassi', 'Vanilla Custard']),

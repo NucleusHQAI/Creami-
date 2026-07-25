@@ -29,8 +29,8 @@ function labelFor(sentence: string): string | null {
  * sentences that belong to the same appliance step (a step can read as more
  * than one sentence — "Process on LITE ICE CREAM. If powdery, add milk and
  * RE-SPIN." is one step, not two). Sentences that don't name a recognised
- * step continue the previous one, which is how an extra instruction stays
- * attached to its appliance step rather than starting an unlabelled group.
+ * step continue the previous one, which is how "Fill only to your MAX FILL
+ * line" stays attached to Fill rather than starting a new, unlabelled group.
  */
 export function parseStandardMethod(text: string): MethodStep[] {
   const sentences = text

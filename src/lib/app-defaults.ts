@@ -1,1 +1,0 @@
-export const DEFAULT_FREEZER_FILL_ML = 525

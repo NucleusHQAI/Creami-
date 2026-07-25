@@ -32,6 +32,7 @@ export const queryKeys = {
     madeCounts: ['recipes', 'madeCounts'] as const,
   },
   categories: { all: ['categories'] as const },
+  adaptationRules: { all: ['adaptationRules'] as const },
   ingredients: {
     all: ['ingredients'] as const,
     // Usage count for one ingredient — the delete guard in IngredientEditSheet.
@@ -65,7 +66,7 @@ export const queryKeys = {
   },
   settings: {
     all: ['settings'] as const,
-    // The one seeded recipe used to preview the effect of freezer fill and
+    // The one seeded recipe used to preview the effect of MAX FILL and
     // default-milk changes on the Settings screen before saving.
     previewRecipe: ['settings', 'previewRecipe'] as const,
   },

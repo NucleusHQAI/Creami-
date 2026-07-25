@@ -19,7 +19,7 @@ function macroResult(kcal: number, proteinG: number, carbsG: number, fatG: numbe
       fat_g: fatG / 2,
     },
     fillVolumeMl: 300,
-    occupiedVolumeMl: 525,
+    occupiedVolumeMl: 680,
     overflows: false,
     excludedLines: [],
     warnings: [],
@@ -52,11 +52,15 @@ test('announces a scaled macro result as one atomic status', () => {
   const status = screen.getByRole('status')
   expect(status).toHaveAttribute('aria-live', 'polite')
   expect(status).toHaveAttribute('aria-atomic', 'true')
-  expect(status).toHaveTextContent('Recalculated for half tub: 200 kcal and 20g protein per tub.')
+  expect(status).toHaveTextContent(
+    'Recalculated for half tub: 200 kcal and 20g protein per tub.',
+  )
 })
 
 test('announces editor macro changes as one atomic status', () => {
-  const { rerender } = render(<EditorMacroReadout macros={macroResult(400, 40, 60, 20)} />)
+  const { rerender } = render(
+    <EditorMacroReadout macros={macroResult(400, 40, 60, 20)} />,
+  )
 
   rerender(<EditorMacroReadout macros={macroResult(200, 20, 30, 10)} />)
 

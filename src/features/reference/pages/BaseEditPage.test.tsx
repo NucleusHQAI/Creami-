@@ -87,7 +87,7 @@ beforeEach(() => {
     refetch: vi.fn(),
   })
   useSettings.mockReturnValue({
-    data: { id: 1, max_fill_ml: 525 } as AppSettings,
+    data: { id: 1, max_fill_ml: 680 } as AppSettings,
     isLoading: false,
     isError: false,
     refetch: vi.fn(),

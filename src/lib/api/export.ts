@@ -9,6 +9,7 @@ import { fetchBases } from '@/lib/api/bases'
 import { fetchSettings } from '@/lib/api/settings'
 import type {
   AppSettings,
+  AdaptationRule,
   BaseWithIngredients,
   Batch,
   Category,
@@ -16,6 +17,7 @@ import type {
   PlanItem,
   Recipe,
   RecipeIngredient,
+  RecipeSource,
   ShoppingCheck,
   ShoppingExtra,
   TastingNote,
@@ -39,6 +41,8 @@ export interface HouseholdExport {
   plan_items: PlanItem[]
   shopping_extras: ShoppingExtra[]
   shopping_checks: ShoppingCheck[]
+  recipe_sources: RecipeSource[]
+  adaptation_rules: AdaptationRule[]
 }
 
 interface RecipeExportRow extends Recipe {
@@ -74,6 +78,8 @@ export async function fetchExportData(): Promise<HouseholdExport> {
     planItemsResult,
     shoppingExtrasResult,
     shoppingChecksResult,
+    recipeSourcesResult,
+    adaptationRulesResult,
   ] = await Promise.all([
     fetchSettings(),
     fetchCategories(),
@@ -85,6 +91,8 @@ export async function fetchExportData(): Promise<HouseholdExport> {
     supabase.from('plan_items').select('*'),
     supabase.from('shopping_extras').select('*'),
     supabase.from('shopping_checks').select('*'),
+    supabase.from('recipe_sources').select('*'),
+    supabase.from('adaptation_rules').select('*'),
   ])
 
   if (batchesResult.error) throw batchesResult.error
@@ -92,6 +100,8 @@ export async function fetchExportData(): Promise<HouseholdExport> {
   if (planItemsResult.error) throw planItemsResult.error
   if (shoppingExtrasResult.error) throw shoppingExtrasResult.error
   if (shoppingChecksResult.error) throw shoppingChecksResult.error
+  if (recipeSourcesResult.error) throw recipeSourcesResult.error
+  if (adaptationRulesResult.error) throw adaptationRulesResult.error
 
   return {
     exported_at: new Date().toISOString(),
@@ -105,5 +115,7 @@ export async function fetchExportData(): Promise<HouseholdExport> {
     plan_items: planItemsResult.data,
     shopping_extras: shoppingExtrasResult.data,
     shopping_checks: shoppingChecksResult.data,
+    recipe_sources: recipeSourcesResult.data,
+    adaptation_rules: adaptationRulesResult.data,
   }
 }

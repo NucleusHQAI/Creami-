@@ -4,7 +4,7 @@ import { queryKeys } from '@/lib/query-keys'
 
 const REFERENCE_STALE_TIME = 1000 * 60 * 60
 
-/** The seeded recipe used to preview freezer-fill and default-milk changes. */
+/** The one seeded recipe ("Vanilla Custard") used to preview MAX FILL and default-milk changes. */
 export function useSettingsPreviewRecipe() {
   return useQuery({
     queryKey: queryKeys.settings.previewRecipe,
