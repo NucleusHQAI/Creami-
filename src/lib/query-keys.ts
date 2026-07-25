@@ -15,8 +15,14 @@ export const queryKeys = {
     detail: (id: string) => ['recipes', 'detail', id] as const,
   },
   categories: { all: ['categories'] as const },
-  ingredients: { all: ['ingredients'] as const },
-  bases: { all: ['bases'] as const },
+  ingredients: {
+    all: ['ingredients'] as const,
+    usage: (id: string) => ['ingredients', 'usage', id] as const,
+  },
+  bases: {
+    all: ['bases'] as const,
+    usage: (id: string) => ['bases', 'usage', id] as const,
+  },
   batches: {
     all: ['batches'] as const,
     active: ['batches', 'active'] as const,
@@ -36,5 +42,10 @@ export const queryKeys = {
     checks: ['shopping', 'checks'] as const,
     recipeOptions: ['shopping', 'recipeOptions'] as const,
   },
-  settings: { all: ['settings'] as const },
+  settings: {
+    all: ['settings'] as const,
+    // The one seeded recipe used to preview the effect of MAX FILL and
+    // default-milk changes on the Settings screen before saving.
+    previewRecipe: ['settings', 'previewRecipe'] as const,
+  },
 } as const
