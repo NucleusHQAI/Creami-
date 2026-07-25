@@ -1,24 +1,32 @@
 import { describe, expect, it } from 'vitest'
 import { parseStandardMethod } from '@/features/reference/lib/parseStandardMethod'
 
-// The literal default from supabase/migrations/0001_init.sql — kept inline
+// The current literal default from the latest settings migration — kept inline
 // so this test catches a drift between the migration and the parser without
 // needing a database.
 const DEFAULT_STANDARD_METHOD =
-  'Blend the base and flavour additions until completely smooth. Fill only to your Deluxe MAX FILL line. Freeze flat for at least 24 hours with the surface level. Process on LITE ICE CREAM. If powdery, add 15–30ml milk and RE-SPIN. Make a narrow hole to the bottom, add the extras and run MIX-IN once.'
+  'Blend the base and flavour additions until completely smooth. Top up the base mixture to your freezer fill line. Freeze flat for at least 24 hours with the surface level. Process on LITE ICE CREAM. If powdery, add 15 to 30ml milk and RE-SPIN. Make a narrow hole to the bottom, add the mix-ins and run MIX-IN once.'
 
 describe('parseStandardMethod', () => {
   it('splits the seeded default into exactly five labelled steps', () => {
     const steps = parseStandardMethod(DEFAULT_STANDARD_METHOD)
 
-    expect(steps.map((step) => step.label)).toEqual(['Blend', 'Fill', 'Freeze', 'Process', 'Mix-in'])
+    expect(steps.map((step) => step.label)).toEqual([
+      'Blend',
+      'Fill',
+      'Freeze',
+      'Process',
+      'Mix-in',
+    ])
   })
 
   it('merges the two Process sentences into one step', () => {
     const steps = parseStandardMethod(DEFAULT_STANDARD_METHOD)
     const process = steps.find((step) => step.label === 'Process')
 
-    expect(process?.text).toBe('Process on LITE ICE CREAM. If powdery, add 15–30ml milk and RE-SPIN.')
+    expect(process?.text).toBe(
+      'Process on LITE ICE CREAM. If powdery, add 15 to 30ml milk and RE-SPIN.',
+    )
   })
 
   it('never throws on empty text', () => {

@@ -121,7 +121,7 @@ function toRecipeLines(recipe: SeedRecipe): MacroLine[] {
 }
 
 function settingsWithMilk(milkSlug: string): MacroSettings {
-  return { maxFillMl: 680, servingsPerTub: 2, defaultMilkIngredientId: milkSlug }
+  return { maxFillMl: 525, servingsPerTub: 2, defaultMilkIngredientId: milkSlug }
 }
 
 function computeFor(
@@ -155,33 +155,61 @@ interface GoldenVector {
 }
 
 const skimmedVectors: GoldenVector[] = [
-  { slug: 'vanilla-custard', fillMl: 393.4, kcal: 458.2, protein: 68.2, carbs: 36.8, fat: 3.7 },
-  { slug: 'mango-lassi', fillMl: 262.4, kcal: 452.9, protein: 60.7, carbs: 45.4, fat: 3.2 },
+  { slug: 'vanilla-custard', fillMl: 252.7, kcal: 409, protein: 63.2, carbs: 29.7, fat: 3.6 },
+  { slug: 'mango-lassi', fillMl: 107.4, kcal: 399, protein: 55.1, carbs: 37.7, fat: 3 },
   {
     slug: 'double-chocolate-brownie',
-    fillMl: 356.3,
-    kcal: 525.9,
-    protein: 69.4,
-    carbs: 39.3,
-    fat: 9.2,
+    fillMl: 222.7,
+    kcal: 479,
+    protein: 64.6,
+    carbs: 32.6,
+    fat: 9,
   },
-  { slug: 'cookies-and-cream', fillMl: 395.7, kcal: 481.5, protein: 68.6, carbs: 39.3, fat: 5.2 },
-  { slug: 'pina-colada', fillMl: 188.2, kcal: 505.8, protein: 58.2, carbs: 40.9, fat: 11.5 },
+  {
+    slug: 'cookies-and-cream',
+    fillMl: 252.7,
+    kcal: 431,
+    protein: 63.4,
+    carbs: 32.1,
+    fat: 5.1,
+  },
+  {
+    slug: 'pina-colada',
+    fillMl: 47.4,
+    kcal: 457,
+    protein: 53.1,
+    carbs: 33.8,
+    fat: 11.3,
+  },
 ]
 
 const semiSkimmedVectors: GoldenVector[] = [
-  { slug: 'vanilla-custard', fillMl: 393.4, kcal: 517.2, protein: 68.2, carbs: 36.0, fat: 10.4 },
-  { slug: 'mango-lassi', fillMl: 262.4, kcal: 492.3, protein: 60.7, carbs: 44.9, fat: 7.6 },
+  { slug: 'vanilla-custard', fillMl: 252.7, kcal: 447, protein: 63.2, carbs: 29.2, fat: 7.9 },
+  { slug: 'mango-lassi', fillMl: 107.4, kcal: 415, protein: 55.1, carbs: 37.5, fat: 4.9 },
   {
     slug: 'double-chocolate-brownie',
-    fillMl: 356.3,
-    kcal: 579.4,
-    protein: 69.4,
-    carbs: 38.6,
-    fat: 15.2,
+    fillMl: 222.7,
+    kcal: 513,
+    protein: 64.6,
+    carbs: 32.2,
+    fat: 12.8,
   },
-  { slug: 'cookies-and-cream', fillMl: 395.7, kcal: 540.9, protein: 68.6, carbs: 38.5, fat: 12.0 },
-  { slug: 'pina-colada', fillMl: 188.2, kcal: 534.0, protein: 58.2, carbs: 40.5, fat: 14.7 },
+  {
+    slug: 'cookies-and-cream',
+    fillMl: 252.7,
+    kcal: 469,
+    protein: 63.4,
+    carbs: 31.6,
+    fat: 9.4,
+  },
+  {
+    slug: 'pina-colada',
+    fillMl: 47.4,
+    kcal: 464,
+    protein: 53.1,
+    carbs: 33.7,
+    fat: 12.1,
+  },
 ]
 
 describe('calculateMacros — golden vectors (skimmed milk)', () => {
@@ -228,27 +256,50 @@ describe('calculateMacros — edge cases', () => {
   it('halves every figure at scale = 0.5 on vanilla-custard', () => {
     const full = computeFor('vanilla-custard', 'skimmed-milk')
     const half = computeFor('vanilla-custard', 'skimmed-milk', { scale: 0.5 })
-    expect(half.fillVolumeMl).toBeCloseTo(196.7, 0)
-    expect(Math.abs(half.fillVolumeMl - 196.7)).toBeLessThanOrEqual(0.1)
-    expect(half.perTub.kcal).toBeCloseTo(full.perTub.kcal / 2, 0)
-    expect(half.perTub.protein_g).toBeCloseTo(full.perTub.protein_g / 2, 1)
-    expect(half.perTub.carbs_g).toBeCloseTo(full.perTub.carbs_g / 2, 1)
-    expect(half.perTub.fat_g).toBeCloseTo(full.perTub.fat_g / 2, 1)
+    expect(half.fillVolumeMl).toBeCloseTo(126.4, 0)
+    expect(Math.abs(half.fillVolumeMl - 126.4)).toBeLessThanOrEqual(0.1)
+    expect(Math.abs(half.perTub.kcal * 2 - full.perTub.kcal)).toBeLessThanOrEqual(1)
+    expect(Math.abs(half.perTub.protein_g * 2 - full.perTub.protein_g)).toBeLessThanOrEqual(0.11)
+    expect(Math.abs(half.perTub.carbs_g * 2 - full.perTub.carbs_g)).toBeLessThanOrEqual(0.11)
+    expect(Math.abs(half.perTub.fat_g * 2 - full.perTub.fat_g)).toBeLessThanOrEqual(0.11)
   })
 
-  it('drops the toasted coconut and reduces kcal by ~32.5 when excludeOptional is set on pina-colada', () => {
-    // The spec's own figure (docs/04-macro-engine.md) marks this "~32.5" —
-    // unlike the tight-tolerance golden vector table above. 32.5 is toasted
-    // coconut's own contribution alone (5g x 650kcal/100g); removing it as a
-    // mixin also frees ~14.3ml of occupied volume that the engine backfills
-    // with milk (worth ~5kcal), which is required for the exact,
-    // non-approximate vanilla-custard vector above to hold (its wafer-pieces
-    // mixin's volume counts toward the derived fill). Net drop is ~27.5kcal.
+  it('drops the toasted coconut without changing the frozen-base fill on pina-colada', () => {
     const withOptional = computeFor('pina-colada', 'skimmed-milk')
     const withoutOptional = computeFor('pina-colada', 'skimmed-milk', { excludeOptional: true })
     const kcalDrop = withOptional.perTub.kcal - withoutOptional.perTub.kcal
-    expect(kcalDrop).toBeGreaterThan(20)
-    expect(kcalDrop).toBeLessThan(35)
+    expect(withoutOptional.fillVolumeMl).toBe(withOptional.fillVolumeMl)
+    expect(kcalDrop).toBeGreaterThanOrEqual(32)
+    expect(kcalDrop).toBeLessThanOrEqual(33)
+  })
+
+  it('counts a mix-in in macros without letting it displace the 525ml frozen base', () => {
+    const withoutMixin = calculateMacros({
+      baseLines: [],
+      fillIngredientId: 'semi-skimmed-milk',
+      recipeLines: [],
+      ingredients: ingredientMap,
+      settings: settingsWithMilk('skimmed-milk'),
+    })
+    const withMixin = calculateMacros({
+      baseLines: [],
+      fillIngredientId: 'semi-skimmed-milk',
+      recipeLines: [
+        {
+          ingredientId: 'wafer-pieces',
+          quantity: 50,
+          unit: 'g',
+          optional: false,
+          role: 'mixin',
+        },
+      ],
+      ingredients: ingredientMap,
+      settings: settingsWithMilk('skimmed-milk'),
+    })
+
+    expect(withMixin.fillVolumeMl).toBe(525)
+    expect(withMixin.fillVolumeMl).toBe(withoutMixin.fillVolumeMl)
+    expect(withMixin.perTub.kcal).toBeGreaterThan(withoutMixin.perTub.kcal)
   })
 
   it('reports overflow and a zero fill when the lines exceed the tub', () => {

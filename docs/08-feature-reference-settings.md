@@ -19,7 +19,7 @@ Everything behind the "More" tab. Less glamorous than the recipe screens, but th
 
 The four base cards from the original document, now six and now real data.
 
-Each card: name, tagline, summary, the ingredient list with quantities, and computed macros for the base alone (with no flavourings, so the fill ingredient tops up to the full 680ml). That last figure is genuinely useful — it is the floor for any recipe on that base.
+Each card: name, tagline, summary, the ingredient list with quantities, and computed macros for the base alone (with no flavourings, so the fill ingredient tops up to the 525ml freezer fill line). That last figure is genuinely useful — it is the floor for any recipe on that base.
 
 Variations show their parentage: "Chocolate creamy — a variation of Everyday creamy".
 
@@ -36,7 +36,7 @@ Static reference, carried over from the original document because it is good and
 **The five steps**, as a numbered list, sourced from `app_settings.standard_method`:
 
 1. **Blend** — blend the base and flavour additions until completely smooth.
-2. **Fill** — top up only to the Deluxe MAX FILL line, roughly 680ml.
+2. **Fill** — top up the base mixture only to the 525ml freezer fill line. Mix-ins are added after spinning.
 3. **Freeze** — freeze flat for at least 24 hours with the surface level.
 4. **Process** — use LITE ICE CREAM. Add 15–30ml milk and RE-SPIN if powdery.
 5. **Mix-in** — make a narrow hole to the bottom, add the extras, run MIX-IN once.
@@ -106,13 +106,13 @@ This is the fastest path from "the numbers are roughly right" to "the numbers ar
 
 | Setting | Control | Default | Effect |
 |---|---|---|---|
-| MAX FILL volume | number, ml | 680 | Recalculates every recipe's derived fill and macros |
+| Freezer fill volume | number, ml | 525 | Frozen-base target before mix-ins; recalculates every recipe's derived fill and macros |
 | Default milk | ingredient select, dairy only | Semi-skimmed | Swaps the fill ingredient everywhere |
 | Freeze hours | number | 24 | Used by the trigger for new batches |
 | Servings per tub | number | 2 | Divides the per-serving figures |
 | Standard method | textarea | the five steps | Shown on recipes with no override |
 
-MAX FILL and default milk both move every number in the app. Show a live preview — "Vanilla Custard: 458 kcal → 517 kcal" — before the change is saved. It makes the consequence obvious instead of surprising.
+Freezer fill and default milk both move every number in the app. Show a live preview before the change is saved. It makes the consequence obvious instead of surprising.
 
 Changing freeze hours affects **new** batches only. Existing ones keep the `ready_at` they were given. Say so on the screen.
 

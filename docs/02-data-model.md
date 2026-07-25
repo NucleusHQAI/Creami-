@@ -75,7 +75,7 @@ The six base formulas.
 | `key` | text unique | `everyday`, `fruit`, `choc`, `dessert`, `cheesecake`, `coconut` |
 | `name`, `tagline`, `summary`, `guidance` | text | display copy |
 | `is_variation_of` | uuid → bases | nullable; `choc` is a variation of `everyday` |
-| `fill_ingredient_id` | uuid → ingredients | the ingredient topped up to reach MAX FILL |
+| `fill_ingredient_id` | uuid → ingredients | the ingredient topped up to reach the freezer fill line |
 | `sort_order` | int | |
 
 ### `base_ingredients`
@@ -203,7 +203,7 @@ Exactly one row, enforced.
 | Column | Type | Default | Notes |
 |---|---|---|---|
 | `id` | int pk | `1` | check `id = 1` |
-| `max_fill_ml` | int | `680` | the Deluxe MAX FILL line |
+| `max_fill_ml` | int | `525` | frozen-base target before mix-ins |
 | `freeze_hours` | int | `24` | |
 | `default_milk_ingredient_id` | uuid → ingredients | semi-skimmed | global milk swap |
 | `servings_per_tub` | int | `2` | |
@@ -425,12 +425,12 @@ create table shopping_checks (
 
 create table app_settings (
   id                         int primary key default 1 check (id = 1),
-  max_fill_ml                int  not null default 680 check (max_fill_ml between 100 and 2000),
+  max_fill_ml                int  not null default 525 check (max_fill_ml between 100 and 2000),
   freeze_hours               int  not null default 24  check (freeze_hours between 1 and 168),
   default_milk_ingredient_id uuid references ingredients(id) on delete set null,
   servings_per_tub           int  not null default 2 check (servings_per_tub > 0),
   standard_method            text not null default
-    'Blend the base and flavour additions until completely smooth. Fill only to your Deluxe MAX FILL line. Freeze flat for at least 24 hours with the surface level. Process on LITE ICE CREAM. If powdery, add 15–30ml milk and RE-SPIN. Make a narrow hole to the bottom, add the extras and run MIX-IN once.',
+    'Blend the base and flavour additions until completely smooth. Top up the base mixture to your freezer fill line. Freeze flat for at least 24 hours with the surface level. Process on LITE ICE CREAM. If powdery, add 15 to 30ml milk and RE-SPIN. Make a narrow hole to the bottom, add the mix-ins and run MIX-IN once.',
   updated_at                 timestamptz not null default now()
 );
 

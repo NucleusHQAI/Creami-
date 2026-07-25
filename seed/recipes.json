@@ -1,7 +1,7 @@
 {
   "_meta": {
     "source": "Derived from the original single-file HTML recipe book. All per-person pick fields have been deliberately removed and must not be reintroduced.",
-    "quantities": "Every quantity is per one full Deluxe tub and has been converted from the original spoon measures to grams or millilitres so the macro engine can total them. The original human-readable wording is preserved in the 'display' field of each line and is what the UI shows.",
+    "quantities": "Every base and flavour-addition quantity is per one 525ml frozen base; mix-ins are additional after spinning. Quantities have been converted from the original spoon measures to grams or millilitres so the macro engine can total them. The original human-readable wording is preserved in the 'display' field of each line and is what the UI shows.",
     "reference_macros": "'reference_kcal' and 'reference_protein_g' are the estimates printed in the original document. They are NOT the values the app displays — the macro engine computes those from the ingredients. They are seeded only so the calibration task (docs/04-macro-engine.md) can compare computed against original and flag any ingredient whose defaults are badly wrong. They may be dropped from the schema once calibration is signed off.",
     "spoon_conversions_used": {
       "vanilla_bean_paste": "1 tsp = 5g",

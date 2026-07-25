@@ -14,7 +14,7 @@ export function useSettings() {
 }
 
 /**
- * Every macro figure in the app depends on settings — MAX FILL and the
+ * Every macro figure in the app depends on settings — freezer fill and the
  * default milk are read live by the macro engine, and freeze hours feeds the
  * batch-ready trigger. Saving invalidates settings itself plus every recipe
  * query, so nothing in the app is left showing a stale calculation.

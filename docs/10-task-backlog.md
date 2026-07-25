@@ -232,7 +232,7 @@ All client-side.
 
 `/recipe/:slug`. Sections 1 and 4–8 from the spec: header with favourite and overflow menu, the base with its ingredients **including the derived milk line**, flavour additions, mix-ins with their optional toggles, method, and the tip. Sections 3 and 9 are later tasks — leave placeholders.
 
-The derived milk line is the point of this screen. Render it as a real ingredient with its "topped up to your 680ml MAX FILL line" annotation.
+The derived milk line is the point of this screen. Render it as a real ingredient with its "topped up to your 525ml freezer fill line; mix-ins are added afterwards" annotation.
 
 **Done when:** a seeded recipe renders completely, the derived milk quantity matches the golden vector, and toggling an optional mix-in off changes the ingredient list.
 
@@ -435,7 +435,7 @@ The edit sheet with every field, Advanced disclosure for density and volume, per
 ### Task 41 · Settings and export
 **Depends on:** 36 · **Spec:** `docs/08-feature-reference-settings.md` § Settings
 
-All five settings with their controls. MAX FILL and default milk show a live preview of their effect on a sample recipe before saving. A note that freeze hours affects new batches only. Account section with email and sign-out. About section. JSON export of everything.
+All five settings with their controls. Freezer fill and default milk show a live preview of their effect on a sample recipe before saving. A note that freeze hours affects new batches only. Account section with email and sign-out. About section. JSON export of everything.
 
 Saving invalidates `settings.all`, `recipes.all` and every `recipes.detail`.
 

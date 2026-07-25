@@ -65,7 +65,7 @@ export const queryKeys = {
   },
   settings: {
     all: ['settings'] as const,
-    // The one seeded recipe used to preview the effect of MAX FILL and
+    // The one seeded recipe used to preview the effect of freezer fill and
     // default-milk changes on the Settings screen before saving.
     previewRecipe: ['settings', 'previewRecipe'] as const,
   },
