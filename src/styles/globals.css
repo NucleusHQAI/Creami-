@@ -30,3 +30,16 @@
     @apply outline-none ring-2 ring-berry ring-offset-2 ring-offset-cream;
   }
 }
+
+@layer components {
+  /* Wavy tub-lid edge for the recipe card's colour band — docs/03 § Recipe card. */
+  .recipe-wave {
+    background-image: radial-gradient(
+      circle at 10px 0,
+      transparent 9px,
+      theme('colors.paper') 9.6px
+    );
+    background-size: 20px 20px;
+    background-repeat: repeat-x;
+  }
+}

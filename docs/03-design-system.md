@@ -74,7 +74,7 @@ fontFamily: {
 |---|---|---|
 | Page title | `font-display`, `clamp(32px, 6vw, 48px)`, `tracking-[-0.04em]`, `leading-[1.05]` | |
 | Section heading | `font-display`, 24–28px, `tracking-[-0.03em]` | |
-| Card title | `font-display`, 20–22px, `tracking-[-0.025em]` | |
+| Card title | `font-display`, 20–22px, `tracking-[-0.025em]` | Recipe cards specifically go bigger and bolder: 24px, `font-extrabold`, `tracking-[-0.03em]` — see Recipe card below |
 | Body | `font-sans`, 15px, `leading-[1.5]` | |
 | Small / secondary | `font-sans`, 13px, `text-muted` | |
 | Eyebrow | `font-mono`, 11px, `uppercase`, `tracking-[0.12em]`, `text-berrydk` | |
@@ -96,11 +96,13 @@ borderRadius: {
   pill:   '99px',   // chips, filters, buttons
 }
 boxShadow: {
-  lift: '0 18px 50px rgba(55, 45, 35, 0.09)',   // hover / raised only
+  lift:        '0 18px 50px rgba(55, 45, 35, 0.09)',   // hover / raised only
+  sticker:     '0 3px 0 0 #e9e2d7',                     // flat "pop" shadow — recipe cards, search bar
+  'sticker-sm':'0 2px 0 0 #e9e2d7',                     // flat shadow for small sticker-style badges
 }
 ```
 
-One shadow, used sparingly. Everything else is separated with `border-line`. Resist adding shadows to make hierarchy — that is what the paper/cream contrast is for.
+`lift` is the soft hover shadow. `sticker`/`sticker-sm` are flat, hard-edged shadows paired with a `border-2 border-ink` — used on recipe cards, the search bar and small circular badges to give them a tactile, cut-out feel, like a label pinned onto paper. Don't blur them and don't use them together with `lift` on the same element. Everything else is still separated with `border-line`, not a shadow.
 
 ## The dot grid
 
@@ -145,8 +147,8 @@ Built in this order. Each lives in `src/components/ui/` and takes no feature kno
 | `IconButton` | 44×44 minimum. Always an `aria-label` |
 | `Card` | Paper surface, line border, `rounded-recipe` |
 | `Pill` | `default`, `protein` (blue tint), `base` (green tint), `accent` (category tint). Mono type |
-| `Chip` | Interactive, toggles. Used for category filters |
-| `FavouriteButton` | Heart. Filled ink when saved, outline when not. Optimistic |
+| `Chip` | Interactive, toggles. `border-2 border-ink` when unselected, `bg-berry border-berry` when selected — berry is the accent for active states, not ink |
+| `FavouriteButton` | Heart. Filled ink when saved, outline when not. Optimistic. On recipe cards it's dressed as a small pinned sticker (`border-2 border-ink`, `shadow-sticker-sm`, slight rotation) |
 | `Sheet` | Bottom sheet on phones, centred modal above 768px. Focus trap, Escape closes, background scroll locked |
 | `Field` | Label, input, hint, error. Wraps React Hook Form |
 | `QuantityInput` | Number plus unit selector (g / ml / item). Spoon helper where the ingredient has `grams_per_tsp` |
@@ -158,25 +160,28 @@ Built in this order. Each lives in `src/components/ui/` and takes no feature kno
 
 ### Recipe card
 
-The most-seen component in the app, so it is specified rather than left to taste.
+The most-seen component in the app, so it is specified rather than left to taste. It reads as a tub lid rather than a data card: a wax-seal emoji badge on a soft illustrated blob, a wavy label edge, one quiet line of stats instead of stacked pills.
 
 ```
-┌──────────────────────────────────┐
-│  ▓▓▓ tinted visual band ▓▓▓   🍦 │   96px, category tint,
-│  ♡                               │   overlapping circles in accent
-├──────────────────────────────────┤
-│  CREAMY CLASSICS                 │   mono, 9.5px, accent colour
-│  Vanilla Custard                 │   display, 22px
+┌══════════════════════════════════┐   2px ink border,
+│  ░░ tinted blob ░░               │   shadow-sticker (flat, not blurred)
+│  ♡      (🍦)                     │   96px band, category tint,
+│         ░░░░                     │   one soft rotated blob in accent,
+│  ﹏﹏﹏﹏﹏﹏﹏﹏﹏﹏﹏﹏﹏  │   emoji in a bordered "seal" circle,
+╞══════════════════════════════════╡   wavy edge (.recipe-wave) into the body
+│  CREAMY CLASSICS                 │   mono, 9.5px, ink
+│  Vanilla Custard                 │   display, 24px, extrabold
 │  Proper vanilla, custardy and…   │   13px muted, 2 lines, clamped
-│                                  │
-│  [Everyday creamy] [458 kcal]    │   pills
-│  [68g protein]     [★ 4.5]       │
+│  Everyday creamy · 458 kcal ·    │   mono, 11px, ink — labels regular
+│  68g protein · ★ 4.5             │   weight, values bold, no boxes
 │                                  │
 │  View recipe                   → │
 └──────────────────────────────────┘
 ```
 
-The visual band recreates the original's two overlapping circles in the category accent — cheap, distinctive, and it needs no image assets.
+The band carries one soft, irregular blob (`border-radius` set per corner, not a circle) in the category accent, rotated a few degrees — distinctive without needing image assets. The emoji sits in a small paper circle with its own ink border and `shadow-sticker-sm`, like a badge stamped onto the lid. The favourite heart is the other sticker on the band, rotated the opposite way.
+
+Stats are one plain-language mono line, not a pill grid — `base name · kcal · protein · rating`, joined with a faint `·`. Only the values (not the base name) are bold. This was a deliberate move away from an earlier, busier direction that boxed every figure — keep it to one line.
 
 Tapping the card opens the detail route. The heart is the one exception and must `stopPropagation`.
 

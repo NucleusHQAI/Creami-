@@ -26,6 +26,11 @@ export function RecipeFilterChips({ categories, value, onChange }: RecipeFilterC
           selected={value === category.key}
           onClick={() => onChange(category.key)}
         >
+          {category.emoji && (
+            <span aria-hidden="true" className="mr-1.5">
+              {category.emoji}
+            </span>
+          )}
           {category.label}
         </Chip>
       ))}

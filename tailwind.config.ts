@@ -27,6 +27,8 @@ export default {
       },
       boxShadow: {
         lift: '0 18px 50px rgba(55, 45, 35, 0.09)',
+        sticker: '0 3px 0 0 #e9e2d7',
+        'sticker-sm': '0 2px 0 0 #e9e2d7',
       },
       maxWidth: {
         content: '1240px',
