@@ -197,24 +197,34 @@ function main(): void {
   lines.push(
     '-- Only touches recipes that are still marked is_seed and have no lines yet, so an edited seed recipe is left alone.',
   )
+  lines.push(
+    "-- Every recipe's lines are one INSERT...SELECT with a VALUES block, not one statement per line: the not-exists " +
+      'guard must be evaluated once per recipe, before any of that recipe\'s own lines exist — split across several ' +
+      "statements, each later line's guard would see the earlier line just inserted and skip itself.",
+  )
   for (const r of recipes) {
     const allLines: Array<{ line: RecipeLine; role: 'addition' | 'mixin' }> = [
       ...r.additions.map((line) => ({ line, role: 'addition' as const })),
       ...r.mixins.map((line) => ({ line, role: 'mixin' as const })),
     ]
-    allLines.forEach(({ line, role }, index) => {
+    const valuesRows = allLines.map(({ line, role }, index) => {
       const ingredientId = line.ingredient
         ? `(select id from ingredients where slug = ${sqlString(line.ingredient)})`
-        : 'null'
-      lines.push(
-        `insert into recipe_ingredients (recipe_id, ingredient_id, role, quantity, unit, display, optional, free_text, sort_order) ` +
-          `select r.id, ${ingredientId}, ${sqlString(role)}, ${sqlNumber(line.quantity)}, ${sqlString(line.unit)}, ` +
-          `${sqlString(line.display)}, ${sqlBool(line.optional ?? false)}, ${sqlString(line.free_text)}, ${index} ` +
-          `from recipes r ` +
-          `where r.slug = ${sqlString(r.slug)} and r.is_seed = true ` +
-          `and not exists (select 1 from recipe_ingredients ri where ri.recipe_id = r.id);`,
+        : 'null::uuid'
+      return (
+        `(${ingredientId}, ${sqlString(role)}::text, ${sqlNumber(line.quantity)}::numeric, ` +
+        `${sqlString(line.unit)}::text, ${sqlString(line.display)}::text, ` +
+        `${sqlBool(line.optional ?? false)}::boolean, ${sqlString(line.free_text)}::text, ${index}::int)`
       )
     })
+    lines.push(
+      `insert into recipe_ingredients (recipe_id, ingredient_id, role, quantity, unit, display, optional, free_text, sort_order) ` +
+        `select r.id, v.ingredient_id, v.role, v.quantity, v.unit, v.display, v.optional, v.free_text, v.sort_order ` +
+        `from recipes r cross join (values ${valuesRows.join(', ')}) ` +
+        `as v(ingredient_id, role, quantity, unit, display, optional, free_text, sort_order) ` +
+        `where r.slug = ${sqlString(r.slug)} and r.is_seed = true ` +
+        `and not exists (select 1 from recipe_ingredients ri where ri.recipe_id = r.id);`,
+    )
   }
   lines.push('')
   lines.push('commit;')
