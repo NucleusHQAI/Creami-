@@ -25,3 +25,6 @@ coverage
 
 # Codex task worktrees
 .worktrees/
+
+# Local Netlify folder
+.netlify
