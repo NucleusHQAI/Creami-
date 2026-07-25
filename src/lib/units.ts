@@ -30,7 +30,7 @@ const FRACTION_GLYPHS: Record<string, string> = {
   '0.67': '⅔',
 }
 
-/** Formats an item-based quantity as a whole number plus a fraction glyph where possible. */
+/** Formats an item-based quantity as a whole number plus a clean fraction glyph where possible. */
 function formatItemQuantity(quantity: number): string {
   const whole = Math.floor(quantity)
   const remainder = Math.round((quantity - whole) * 100) / 100
@@ -40,28 +40,37 @@ function formatItemQuantity(quantity: number): string {
   }
 
   const glyph = FRACTION_GLYPHS[String(remainder)]
-  const fraction = glyph ?? remainder.toFixed(2).replace(/^0/, '')
+  if (glyph) {
+    return whole > 0 ? `${whole}${glyph}` : glyph
+  }
 
-  return whole > 0 ? `${whole}${fraction}` : fraction
+  // Not a clean fraction — one decimal place on the whole quantity.
+  return String(Math.round(quantity * 10) / 10)
 }
 
 /**
- * Formats a quantity for display. Item quantities render as whole numbers
- * with a fraction glyph; anything under half a gram or millilitre reads as
+ * Formats a quantity for display, per docs/05-feature-recipes.md "Scaling":
+ * item quantities render as whole numbers with a clean fraction glyph where
+ * possible, else one decimal; g/ml under 10 keep one decimal, 10 and over
+ * round to whole numbers; anything under half a gram or millilitre reads as
  * "a pinch" rather than a number that looks precise but isn't; nothing ever
- * renders as a bare "0".
+ * renders as a bare "0g"/"0ml".
  */
 export function formatQuantity(quantity: number, unit: Unit): string {
   if (unit === 'item') {
     return formatItemQuantity(quantity)
   }
 
-  if (quantity > 0 && quantity < 0.5) {
+  if (quantity < 0.5) {
     return 'a pinch'
   }
 
-  const rounded = Math.round(quantity)
-  return `${rounded}${unit}`
+  if (quantity < 10) {
+    const oneDecimal = Math.round(quantity * 10) / 10
+    return `${oneDecimal}${unit}`
+  }
+
+  return `${Math.round(quantity)}${unit}`
 }
 
 /**
