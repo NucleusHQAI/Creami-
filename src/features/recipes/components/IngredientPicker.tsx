@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useIngredients } from '@/features/reference/hooks/useIngredients'
 import { useIngredientUsageCounts } from '@/features/recipes/hooks/useIngredientUsageCounts'
-import { NewIngredientSheet } from '@/features/recipes/components/NewIngredientSheet'
+import { IngredientEditSheet } from '@/features/reference/components/IngredientEditSheet'
 import type { Ingredient } from '@/types/domain'
 
 export interface IngredientPickerProps {
@@ -29,8 +29,8 @@ const CATEGORY_LABELS: Record<string, string> = {
  * Searchable, grouped ingredient combobox (docs/05 § The ingredient line
  * editor). Grouped by ingredient category, most-used ingredients first
  * within each group. When nothing matches, offers "add as a note" (a
- * free-text line, no macros) and "create a new ingredient" (a minimal seam
- * sheet — see NewIngredientSheet).
+ * free-text line, no macros) and "create a new ingredient" (the canonical
+ * ingredient editor sheet, reused here in create mode).
  */
 export function IngredientPicker({
   ingredientId,
@@ -167,11 +167,11 @@ export function IngredientPicker({
         </div>
       )}
 
-      <NewIngredientSheet
+      <IngredientEditSheet
         open={sheetOpen}
         initialName={trimmedQuery}
         onClose={() => setSheetOpen(false)}
-        onCreated={(ingredient) => {
+        onSaved={(ingredient) => {
           setSheetOpen(false)
           onSelectIngredient(ingredient)
           setQuery(ingredient.name)

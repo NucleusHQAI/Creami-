@@ -1,13 +1,5 @@
 import { supabase } from '@/lib/supabase'
-import { slugify } from '@/lib/slug'
-import type {
-  Ingredient,
-  IngredientBasis,
-  IngredientUnit,
-  Recipe,
-  RecipeListRow,
-  RecipeWithLines,
-} from '@/types/domain'
+import type { IngredientUnit, Recipe, RecipeListRow, RecipeWithLines } from '@/types/domain'
 
 // The nested select behind both fetchRecipe and fetchRecipesWithLines.
 // `recipe_ingredients` is aliased to `ingredients` so the result lands
@@ -186,43 +178,3 @@ export async function toggleFavourite(id: string, next: boolean): Promise<void> 
   if (error) throw error
 }
 
-export interface NewIngredientInput {
-  name: string
-  category: string
-  basis: IngredientBasis
-  kcal: number
-  proteinG: number
-  carbsG: number
-  fatG: number
-  gramsPerItem: number | null
-}
-
-/**
- * A minimal ingredient creator so the recipe editor's ingredient picker isn't
- * stuck when nothing matches. Task 40 (the canonical ingredient editor, with
- * density, volume and the full field set) will likely replace this — this is
- * deliberately just enough to keep the recipe editor moving, per docs/10
- * Task 23's scoping note.
- */
-export async function createIngredient(input: NewIngredientInput): Promise<Ingredient> {
-  const slug = slugify(input.name)
-
-  const { data, error } = await supabase
-    .from('ingredients')
-    .insert({
-      name: input.name,
-      slug,
-      category: input.category,
-      basis: input.basis,
-      kcal: input.kcal,
-      protein_g: input.proteinG,
-      carbs_g: input.carbsG,
-      fat_g: input.fatG,
-      grams_per_item: input.gramsPerItem,
-    })
-    .select()
-    .single()
-
-  if (error) throw error
-  return data
-}

@@ -16,6 +16,7 @@ import { useCategories } from '@/features/reference/hooks/useCategories'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { ErrorState } from '@/components/ui/ErrorState'
 import { Button } from '@/components/ui/Button'
+import { ReadyBanner } from '@/features/freezer/components/ReadyBanner'
 
 export default function RecipeListPage() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -59,12 +60,8 @@ export default function RecipeListPage() {
 
   return (
     <div className="space-y-6">
-      {/*
-        Ready-to-spin banner (docs/05 § Recipe list item 1) is Task 28, built
-        in the freezer phase running in parallel. Deliberately absent here —
-        this page must not fetch batches data itself. Task 28 slots its
-        banner in above the search field.
-      */}
+      {/* Ready-to-spin banner — docs/05 § Recipe list item 1 / Task 28. */}
+      <ReadyBanner />
 
       <div className="sticky top-0 z-10 -mx-4 space-y-4 bg-cream/95 px-4 pb-3 pt-1 backdrop-blur sm:mx-0 sm:px-0 md:top-16">
         <div className="relative">

@@ -21,6 +21,10 @@ import { RecipeActionButtons } from '@/features/recipes/components/RecipeActionB
 import { describeBaseLine, describeRecipeLine } from '@/features/recipes/ingredient-display'
 import { splitIntoSteps } from '@/lib/text'
 import type { RecipeWithLines } from '@/types/domain'
+import { LogBatchSheet } from '@/features/freezer/components/LogBatchSheet'
+import { RatingsSection } from '@/features/freezer/components/RatingsSection'
+import { RecipeInsights } from '@/features/freezer/components/RecipeInsights'
+import { useAddToPlan } from '@/features/shopping/hooks/useAddToPlan'
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
@@ -47,11 +51,13 @@ export default function RecipeDetailPage() {
   const toggleFavourite = useToggleFavourite()
   const { archiveWithUndo, isPending: isArchiving } = useArchiveRecipe()
   const duplicateRecipe = useDuplicateRecipe()
+  const addToPlan = useAddToPlan()
 
   const [mode, setMode] = useState<ServingMode>('full')
   const [customMl, setCustomMl] = useState(680)
   const [excludedOptionalIds, setExcludedOptionalIds] = useState<Set<string>>(new Set())
   const [deleteOpen, setDeleteOpen] = useState(false)
+  const [logBatchOpen, setLogBatchOpen] = useState(false)
 
   const maxFillMl = settings?.max_fill_ml ?? 680
   const scale = mode === 'full' ? 1 : mode === 'half' ? 0.5 : customMl / maxFillMl
@@ -142,6 +148,8 @@ export default function RecipeDetailPage() {
               onEdit={() => navigate(`/recipe/${recipe.slug}/edit`)}
               onDuplicate={() => duplicateRecipe.mutate(recipe)}
               onDelete={() => setDeleteOpen(true)}
+              onAddToShoppingList={() => addToPlan.mutate(recipe.id)}
+              onLogBatch={() => setLogBatchOpen(true)}
             />
           </div>
         </div>
@@ -231,18 +239,15 @@ export default function RecipeDetailPage() {
         </Section>
       )}
 
-      {/*
-        9. Ratings and notes — Task 29 (docs/06-feature-freezer.md), running
-        in the freezer phase. Deliberately a placeholder: average rating,
-        note history and "Add a note" land here in place, same position in
-        the page order.
-      */}
-      <Section title="Ratings and notes">
-        <p className="text-[13px] text-muted">Ratings and tasting notes are coming soon.</p>
-      </Section>
+      {/* 9. Ratings and notes, plus insights (docs/06 § Insights) */}
+      <RecipeInsights recipeId={recipe.id} />
+      <RatingsSection recipeId={recipe.id} />
 
       {/* 10. Actions */}
-      <RecipeActionButtons />
+      <RecipeActionButtons
+        onAddToShoppingList={() => addToPlan.mutate(recipe.id)}
+        onLogBatch={() => setLogBatchOpen(true)}
+      />
 
       <DeleteRecipeSheet
         open={deleteOpen}
@@ -253,6 +258,13 @@ export default function RecipeDetailPage() {
           setDeleteOpen(false)
           archiveWithUndo(recipe, () => navigate('/'))
         }}
+      />
+
+      <LogBatchSheet
+        recipeId={recipe.id}
+        recipeName={recipe.name}
+        open={logBatchOpen}
+        onClose={() => setLogBatchOpen(false)}
       />
     </div>
   )
