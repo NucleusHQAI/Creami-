@@ -1,0 +1,24 @@
+node_modules
+dist
+dist-ssr
+*.local
+
+.env
+.env.*
+!.env.example
+
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+coverage
+*.tsbuildinfo
+
+# Claude Code harness state (agent worktrees, local settings) — never repo content
+.claude/
