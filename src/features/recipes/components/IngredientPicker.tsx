@@ -1,4 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import {
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+  type KeyboardEvent,
+} from 'react'
 import { useIngredients } from '@/features/reference/hooks/useIngredients'
 import { useIngredientUsageCounts } from '@/features/recipes/hooks/useIngredientUsageCounts'
 import { IngredientEditSheet } from '@/features/reference/components/IngredientEditSheet'
@@ -46,10 +53,13 @@ export function IngredientPicker({
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState(selected?.name ?? freeText ?? '')
   const [sheetOpen, setSheetOpen] = useState(false)
+  const [activeIndex, setActiveIndex] = useState(-1)
   const containerRef = useRef<HTMLDivElement>(null)
+  const listboxId = useId()
 
   useEffect(() => {
     setQuery(selected?.name ?? freeText ?? '')
+    setActiveIndex(-1)
   }, [selected?.name, freeText])
 
   useEffect(() => {
@@ -58,6 +68,7 @@ export function IngredientPicker({
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
         setOpen(false)
         setQuery(selected?.name ?? freeText ?? '')
+        setActiveIndex(-1)
       }
     }
     document.addEventListener('mousedown', handlePointerDown)
@@ -84,10 +95,42 @@ export function IngredientPicker({
     return [...byCategory.entries()].sort(([a], [b]) => a.localeCompare(b))
   }, [ingredients, query, usageCounts])
 
+  const flatOptions = useMemo(() => groups.flatMap(([, rows]) => rows), [groups])
   const hasExactMatch = (ingredients ?? []).some(
     (ingredient) => ingredient.name.toLowerCase() === query.trim().toLowerCase(),
   )
   const trimmedQuery = query.trim()
+  const activeOption = flatOptions[activeIndex]
+
+  function selectIngredient(ingredient: Ingredient) {
+    onSelectIngredient(ingredient)
+    setQuery(ingredient.name)
+    setOpen(false)
+    setActiveIndex(-1)
+  }
+
+  function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
+    if (event.key === 'ArrowDown') {
+      event.preventDefault()
+      setOpen(true)
+      if (flatOptions.length === 0) return
+      setActiveIndex((index) => (index >= flatOptions.length - 1 ? 0 : index + 1))
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault()
+      setOpen(true)
+      if (flatOptions.length === 0) return
+      setActiveIndex((index) => (index <= 0 ? flatOptions.length - 1 : index - 1))
+    } else if (event.key === 'Enter' && open) {
+      if (activeOption) {
+        event.preventDefault()
+        selectIngredient(activeOption)
+      }
+    } else if (event.key === 'Escape' && open) {
+      event.preventDefault()
+      setOpen(false)
+      setActiveIndex(-1)
+    }
+  }
 
   return (
     <div ref={containerRef} className="relative">
@@ -95,46 +138,58 @@ export function IngredientPicker({
         type="text"
         role="combobox"
         aria-expanded={open}
+        aria-autocomplete="list"
+        aria-controls={listboxId}
+        aria-activedescendant={
+          open && activeOption ? `${listboxId}-option-${activeOption.id}` : undefined
+        }
         aria-label={ariaLabel}
         value={query}
         onFocus={() => setOpen(true)}
         onChange={(event) => {
           setQuery(event.target.value)
           setOpen(true)
+          setActiveIndex(-1)
         }}
+        onKeyDown={handleKeyDown}
         placeholder="Search ingredients…"
         className="h-11 w-full rounded-soft border border-line bg-cream px-3 text-ink focus-visible:outline-none"
       />
 
       {open && (
         <div
-          role="listbox"
-          aria-label={ariaLabel}
           className="absolute z-20 mt-1 max-h-72 w-full min-w-[240px] overflow-y-auto rounded-panel border border-line bg-paper py-1 shadow-lift"
         >
-          {groups.map(([category, categoryIngredients]) => (
-            <div key={category}>
-              <p className="px-3 pt-2 font-mono text-[10px] font-bold uppercase tracking-[0.08em] text-muted">
-                {CATEGORY_LABELS[category] ?? category}
-              </p>
-              {categoryIngredients.map((ingredient) => (
-                <button
-                  key={ingredient.id}
-                  type="button"
-                  role="option"
-                  aria-selected={ingredient.id === ingredientId}
-                  onClick={() => {
-                    onSelectIngredient(ingredient)
-                    setQuery(ingredient.name)
-                    setOpen(false)
-                  }}
-                  className="flex w-full items-center justify-between px-3 py-2 text-left text-[14px] text-ink hover:bg-cream"
+          <div id={listboxId} role="listbox" aria-label={ariaLabel}>
+            {groups.map(([category, categoryIngredients]) => (
+              <div
+                key={category}
+                role="group"
+                aria-label={CATEGORY_LABELS[category] ?? category}
+              >
+                <p
+                  aria-hidden="true"
+                  className="px-3 pt-2 font-mono text-[10px] font-bold uppercase tracking-[0.08em] text-muted"
                 >
-                  {ingredient.name}
-                </button>
-              ))}
-            </div>
-          ))}
+                  {CATEGORY_LABELS[category] ?? category}
+                </p>
+                {categoryIngredients.map((ingredient) => (
+                  <button
+                    key={ingredient.id}
+                    id={`${listboxId}-option-${ingredient.id}`}
+                    type="button"
+                    role="option"
+                    tabIndex={-1}
+                    aria-selected={ingredient.id === ingredientId}
+                    onClick={() => selectIngredient(ingredient)}
+                    className="flex w-full items-center justify-between px-3 py-2 text-left text-[14px] text-ink hover:bg-cream"
+                  >
+                    {ingredient.name}
+                  </button>
+                ))}
+              </div>
+            ))}
+          </div>
 
           {trimmedQuery && !hasExactMatch && (
             <div className="border-t border-line pt-1">
